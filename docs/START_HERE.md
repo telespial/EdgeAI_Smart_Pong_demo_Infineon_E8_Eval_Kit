@@ -6,16 +6,17 @@ Port Smart Pong onto the PSOC Edge E84 Evaluation Kit (EPC2) using the known-goo
 ## Current Baseline (2026-03-21)
 - Board + display boot confirmed with flashed firmware
 - Display: Waveshare 4.3-inch (800x480)
-- Existing app: LVGL music demo with `CUSTOM BUILD` banner
-- Smart Pong prep entry screen is scaffolded and build-gated
+- Active app mode: Smart Pong prep screen (`APP_SMART_PONG_MODE=1`)
+- Screen confirmed on hardware: `SMART PONG - PORT PREP`
 
 ## Read Order
 1. `../README.md`
 2. `PROJECT_STATE.md`
 3. `HARDWARE_SETUP.md`
 4. `OPS_RUNBOOK.md`
-5. `SMART_PONG_PORT_PLAN.md`
-6. `TODO.md`
+5. `RESTORE_POINTS.md`
+6. `SMART_PONG_PORT_PLAN.md`
+7. `TODO.md`
 
 ## Source Of Truth
 - Runtime entry: `../proj_cm55/main.c`
@@ -23,5 +24,5 @@ Port Smart Pong onto the PSOC Edge E84 Evaluation Kit (EPC2) using the known-goo
 - Display selection: `../common.mk` (`CONFIG_DISPLAY`)
 
 ## Mode Switch
-- Default: music demo (`APP_SMART_PONG_MODE=0`)
-- Smart Pong prep screen: set `APP_SMART_PONG_MODE=1` in `proj_cm55/Makefile`
+- Smart Pong prep screen (active): `APP_SMART_PONG_MODE=1`
+- Music demo fallback: set `APP_SMART_PONG_MODE=0`

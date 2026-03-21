@@ -23,9 +23,9 @@ make program TOOLCHAIN=GCC_ARM
 ## Toggle Smart Pong Prep Screen
 Edit `proj_cm55/Makefile`:
 ```make
-# DEFINES+=APP_SMART_PONG_MODE=1
+DEFINES+=APP_SMART_PONG_MODE=1
 ```
-Uncomment for Smart Pong prep screen, then build/program.
+Set to `1` for Smart Pong prep screen (current golden). Set to `0` for music-demo fallback.
 
 ## Verify Device Detection
 During flash logs, confirm:

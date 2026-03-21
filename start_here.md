@@ -8,7 +8,8 @@ Read in this exact order:
 3. `docs/PROJECT_STATE.md`
 4. `docs/HARDWARE_SETUP.md`
 5. `docs/OPS_RUNBOOK.md`
-6. `docs/TODO.md`
+6. `docs/RESTORE_POINTS.md`
+7. `docs/TODO.md`
 
 Working rule:
 - After each build/flash/config change, update `docs/PROJECT_STATE.md` and append a command summary to `docs/COMMAND_LOG.md`.

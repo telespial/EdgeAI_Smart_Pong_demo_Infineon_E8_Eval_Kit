@@ -12,3 +12,6 @@
 9. Built full application (`make build TOOLCHAIN=GCC_ARM`) with successful CM33/CM55 compile, link, and postbuild packaging.
 10. Renamed `proj_cm55/app/smart_pong/` to `proj_cm55/app/EdgeAI_Smart_Pong_demo_Infineon_E8_Eval_Kit/` and updated all references.
 11. Rebuilt application after rename to verify compile/link/postbuild success.
+
+12. Enabled `APP_SMART_PONG_MODE=1`, flashed kit, and confirmed `SMART PONG - PORT PREP` screen.
+13. Added `docs/RESTORE_POINTS.md` and updated startup/runbook/project-state docs for golden/failsafe workflow.

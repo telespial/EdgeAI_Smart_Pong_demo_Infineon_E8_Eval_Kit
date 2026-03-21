@@ -100,7 +100,7 @@ INCLUDES+=
 # Add additional defines to the build process (without a leading -D).
 DEFINES+=CY_RETARGET_IO_CONVERT_LF_TO_CRLF _BAREMETAL=0
 # Set to 1 to run Smart Pong prep screen instead of LVGL music demo.
-# DEFINES+=APP_SMART_PONG_MODE=1
+DEFINES+=APP_SMART_PONG_MODE=1
 
 # Check which kit is being used
 ifeq (APP_KIT_PSE84_AI, $(TARGET))
