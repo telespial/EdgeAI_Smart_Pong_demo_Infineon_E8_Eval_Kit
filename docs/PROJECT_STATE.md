@@ -23,6 +23,7 @@ PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 - Smart Pong prep module added at `proj_cm55/app/EdgeAI_Smart_Pong_demo_Infineon_E8_Eval_Kit/`
 - Full project rebuild completed successfully after Smart Pong scaffolding changes
 - Smart Pong prep image flashed and boot verified on kit (2026-03-21)
+- First playable Pong loop implemented and flashed (ball + paddles + score + touch paddle control)
 
 ## Recent Changes
 1. Added Smart Pong scaffold entry module (`smart_pong_app.c/.h`)
@@ -32,6 +33,6 @@ PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 5. Added restore-points framework (`docs/RESTORE_POINTS.md`) for golden/failsafe rollback
 
 ## Next Milestones
-1. Add game loop timer and ball/paddle state model
-2. Map touch input to paddle control
-3. Add scoring, reset flow, and simple AI paddle
+1. Tune gameplay feel (speed, paddle size, collision response)
+2. Add HUD polish (winner splash, restart animation)
+3. Split app into `game/input/render` modules after behavior stabilizes

@@ -15,3 +15,6 @@
 
 12. Enabled `APP_SMART_PONG_MODE=1`, flashed kit, and confirmed `SMART PONG - PORT PREP` screen.
 13. Added `docs/RESTORE_POINTS.md` and updated startup/runbook/project-state docs for golden/failsafe workflow.
+14. Committed/pushed golden-baseline docs update (`b78e773`) and pushed restore tags (`failsafe_*`, `golden_*`).
+15. Replaced Smart Pong prep placeholder with first playable loop in `smart_pong_app.c`.
+16. Built and flashed playable Pong image; OpenOCD write/verify passed on `PSE846GPS2DBZC4A`.
