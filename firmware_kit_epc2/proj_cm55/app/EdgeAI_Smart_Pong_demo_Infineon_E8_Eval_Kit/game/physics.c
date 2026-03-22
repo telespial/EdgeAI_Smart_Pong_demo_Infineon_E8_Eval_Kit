@@ -239,19 +239,23 @@ void physics_reset_ball(pong_game_t *g, int serve_dir)
     physics_speedpp_track_peak(g);
 }
 
-static void physics_wall_bounce(float *p, float *v, float r)
+static bool physics_wall_bounce(float *p, float *v, float r)
 {
-    if (!p || !v) return;
+    if (!p || !v) return false;
+    bool bounced = false;
     if ((*p - r) < 0.0f)
     {
         *p = r;
         *v = absf(*v);
+        bounced = true;
     }
     if ((*p + r) > 1.0f)
     {
         *p = 1.0f - r;
         *v = -absf(*v);
+        bounced = true;
     }
+    return bounced;
 }
 
 static float physics_axis_reflect(float p0, float v, float tau, float r)
@@ -303,6 +307,7 @@ static bool physics_paddle_overlap_yz(const pong_paddle_t *p, float y, float z, 
 static void physics_paddle_hit(pong_game_t *g, pong_paddle_t *p, bool left_side)
 {
     if (!g || !p) return;
+    if (g->sfx_paddle_hit_count < 255u) g->sfx_paddle_hit_count++;
 
     float speed_up = 1.02f;
     float vlim = 1.6f;
@@ -386,8 +391,14 @@ static bool physics_step_sub(pong_game_t *g, float dt)
     g->ball.z += g->ball.vz * dt;
 
     /* Walls (y and z). */
-    physics_wall_bounce(&g->ball.y, &g->ball.vy, g->ball.r);
-    physics_wall_bounce(&g->ball.z, &g->ball.vz, g->ball.r);
+    if (physics_wall_bounce(&g->ball.y, &g->ball.vy, g->ball.r))
+    {
+        if (g->sfx_wall_bounce_count < 255u) g->sfx_wall_bounce_count++;
+    }
+    if (physics_wall_bounce(&g->ball.z, &g->ball.vz, g->ball.r))
+    {
+        /* Keep Z-wall (depth) bounce silent to avoid non-obvious buzz-like SFX. */
+    }
 
     /* Paddle collisions. */
     const float slop = g->ball.r * 0.02f;

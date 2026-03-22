@@ -2,9 +2,17 @@
 
 #include <stdint.h>
 
-/* Display geometry. */
+/* Display geometry follows the selected panel profile from CONFIG_DISPLAY.
+ *  - W4P3INCH_DISP / W4P7INCH-style profile -> MTB_DISPLAY_W4P3INCH_RPI (800x480 active)
+ *  - WF101JTYAHMNB0_DISP                      -> default path (1024x600 active)
+ */
+#if defined(MTB_DISPLAY_W4P3INCH_RPI)
 #define EDGEAI_LCD_W 800
 #define EDGEAI_LCD_H 480
+#else
+#define EDGEAI_LCD_W 1024
+#define EDGEAI_LCD_H 600
+#endif
 
 /* Accelerometer normalization.
  * FXLS8974 configuration yields roughly ~512 counts per 1g in the current mode.
@@ -20,7 +28,7 @@
 
 /* Render tile limits (single-blit path). */
 #define EDGEAI_TILE_MAX_W 200
-#define EDGEAI_TILE_MAX_H 480
+#define EDGEAI_TILE_MAX_H EDGEAI_LCD_H
 
 /* Fixed-timestep target. */
 #ifndef EDGEAI_FIXED_FPS

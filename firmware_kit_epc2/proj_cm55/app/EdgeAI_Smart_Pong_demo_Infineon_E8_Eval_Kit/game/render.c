@@ -530,7 +530,10 @@ static void render_draw_ball(uint16_t *dst, uint32_t w, uint32_t h, int32_t x0, 
 
     int32_t fx = 0, fy = 0;
     render_project(rs, b->x, 1.0f, b->z, &fx, &fy, NULL);
-    int32_t sh_r = r_px / 2;
+    /* Shadow size grows near floor (y -> 1) and shrinks with height (y -> 0). */
+    float floor_prox = clamp01f(b->y);
+    float sh_scale = 0.22f + (0.98f * floor_prox);
+    int32_t sh_r = (int32_t)((float)r_px * sh_scale);
     if (sh_r < 1) sh_r = 1;
     sw_render_filled_circle(dst, w, h, x0, y0, fx, fy, sh_r, c_shadow);
 
@@ -913,7 +916,14 @@ static void render_ui(uint16_t *dst, uint32_t w, uint32_t h, int32_t tile_x0, in
         edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0, EDGEAI_UI_LABEL_X, EDGEAI_UI_ROW5_Y + label_yoff, title_scale, "MATCH", c_opt_text);
         edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0, EDGEAI_UI_LABEL_X, EDGEAI_UI_ROW6_Y + label_yoff, title_scale, "TARGET", c_opt_text);
         edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0, EDGEAI_UI_LABEL_X, EDGEAI_UI_ROW7_Y + label_yoff, title_scale, "SPEED++", c_opt_text);
-        edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0, EDGEAI_UI_LABEL_X, EDGEAI_UI_ROW8_Y + label_yoff, title_scale, "NEW GAME", c_opt_text);
+        {
+            const int32_t volume_scale = 2;
+            const int32_t volume_label_yoff = (EDGEAI_UI_ROW_H - 7 * volume_scale) / 2;
+            edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0,
+                                          EDGEAI_UI_LABEL_X, EDGEAI_UI_ROW8_Y + volume_label_yoff,
+                                          volume_scale, "VOL", c_opt_text);
+        }
+        edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0, EDGEAI_UI_LABEL_X, EDGEAI_UI_ROW9_Y + label_yoff, title_scale, "NEW GAME", c_opt_text);
 
         /* Players: 0/1/2 */
         for (int i = 0; i < 3; i++)
@@ -1068,10 +1078,57 @@ static void render_ui(uint16_t *dst, uint32_t w, uint32_t h, int32_t tile_x0, in
             edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0, tx0, ty0, opt_scale, t, sel ? c_opt_text_sel : c_opt_text);
         }
 
+        /* Volume: large DOWN / UP buttons with centered numeric value. */
+        {
+            const int32_t vol_x = EDGEAI_UI_PANEL_X + 12;
+            const int32_t vol_left_w = 88;
+            const int32_t vol_center_w = 60;
+            const int32_t vol_right_w = 88;
+
+            int32_t bx0 = vol_x;
+            int32_t by0 = EDGEAI_UI_ROW8_Y + opt_yoff;
+            int32_t bx1 = bx0 + vol_left_w - 1;
+            int32_t by1 = by0 + EDGEAI_UI_OPT_H - 1;
+            render_fill_round_rect(dst, w, h, tile_x0, tile_y0, bx0, by0, bx1, by1, EDGEAI_UI_OPT_H / 2, c_opt);
+            {
+                const int32_t vol_text_scale = 2;
+                edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0,
+                                              bx0 + (vol_left_w - edgeai_text5x7_width(vol_text_scale, "VOL DN")) / 2,
+                                              by0 + (EDGEAI_UI_OPT_H - 7 * vol_text_scale) / 2,
+                                              vol_text_scale, "VOL DN", c_opt_text);
+            }
+
+            int32_t cbx0 = vol_x + vol_left_w;
+            int32_t cbx1 = cbx0 + vol_center_w - 1;
+            render_fill_round_rect(dst, w, h, tile_x0, tile_y0, cbx0, by0, cbx1, by1, EDGEAI_UI_OPT_H / 2, c_panel);
+
+            int32_t rbx0 = cbx1 + 1;
+            int32_t rbx1 = rbx0 + vol_right_w - 1;
+            render_fill_round_rect(dst, w, h, tile_x0, tile_y0, rbx0, by0, rbx1, by1, EDGEAI_UI_OPT_H / 2, c_opt);
+            {
+                const int32_t vol_text_scale = 2;
+                edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0,
+                                              rbx0 + (vol_right_w - edgeai_text5x7_width(vol_text_scale, "UP")) / 2,
+                                              by0 + (EDGEAI_UI_OPT_H - 7 * vol_text_scale) / 2,
+                                              vol_text_scale, "UP", c_opt_text);
+            }
+
+            char t[4];
+            t[0] = (char)('0' + ((g->audio_volume / 100u) % 10u));
+            t[1] = (char)('0' + ((g->audio_volume / 10u) % 10u));
+            t[2] = (char)('0' + (g->audio_volume % 10u));
+            t[3] = 0;
+            const int32_t vol_value_scale = 2;
+            int32_t tw = edgeai_text5x7_width(vol_value_scale, t);
+            int32_t tx0 = cbx0 + (vol_center_w - tw) / 2;
+            int32_t ty0 = by0 + (EDGEAI_UI_OPT_H - 7 * vol_value_scale) / 2;
+            edgeai_text5x7_draw_scaled_sw(dst, w, h, tile_x0, tile_y0, tx0, ty0, vol_value_scale, t, c_opt_text);
+        }
+
         /* New game. */
         {
             int32_t bx0 = EDGEAI_UI_NEW_X;
-            int32_t by0 = EDGEAI_UI_ROW8_Y + new_yoff;
+            int32_t by0 = EDGEAI_UI_ROW9_Y + new_yoff;
             int32_t bx1 = bx0 + EDGEAI_UI_NEW_W - 1;
             int32_t by1 = by0 + EDGEAI_UI_NEW_H - 1;
 
@@ -1266,7 +1323,7 @@ static void render_ai_telemetry(uint16_t *dst, uint32_t w, uint32_t h, int32_t t
     static uint16_t s_f_ms = 0u;
     static uint32_t s_cached_frame = 0xFFFFFFFFu;
     static char s_line1[] = "N000MS F000MS";
-    static char s_line2[] = "L0.000S A0.000S";
+    static char s_line2[] = "L000MS A000MS";
 
     if (s_cached_frame != g->frame)
     {
@@ -1308,12 +1365,16 @@ static void render_ai_telemetry(uint16_t *dst, uint32_t w, uint32_t h, int32_t t
 
         char n_ms[3];
         char f_ms[3];
-        char last_s[4];
-        char avg_s[4];
+        char last_ms[3];
+        char avg_ms[3];
         text_u3(n_ms, s_n_ms);
         text_u3(f_ms, s_f_ms);
-        text_s13(last_s, npu_t.last_infer_us);
-        text_s13(avg_s, npu_t.avg_infer_us);
+        uint32_t last_v = (npu_t.last_infer_us + 500u) / 1000u;
+        uint32_t avg_v = (npu_t.avg_infer_us + 500u) / 1000u;
+        if ((last_v == 0u) && (npu_t.last_infer_us > 0u)) last_v = 1u;
+        if ((avg_v == 0u) && (npu_t.avg_infer_us > 0u)) avg_v = 1u;
+        text_u3(last_ms, last_v);
+        text_u3(avg_ms, avg_v);
 
         s_line1[1] = n_ms[0];
         s_line1[2] = n_ms[1];
@@ -1322,14 +1383,12 @@ static void render_ai_telemetry(uint16_t *dst, uint32_t w, uint32_t h, int32_t t
         s_line1[9] = f_ms[1];
         s_line1[10] = f_ms[2];
 
-        s_line2[1] = last_s[0];
-        s_line2[3] = last_s[1];
-        s_line2[4] = last_s[2];
-        s_line2[5] = last_s[3];
-        s_line2[9] = avg_s[0];
-        s_line2[11] = avg_s[1];
-        s_line2[12] = avg_s[2];
-        s_line2[13] = avg_s[3];
+        s_line2[1] = last_ms[0];
+        s_line2[2] = last_ms[1];
+        s_line2[3] = last_ms[2];
+        s_line2[8] = avg_ms[0];
+        s_line2[9] = avg_ms[1];
+        s_line2[10] = avg_ms[2];
 
         s_cached_frame = g->frame;
     }

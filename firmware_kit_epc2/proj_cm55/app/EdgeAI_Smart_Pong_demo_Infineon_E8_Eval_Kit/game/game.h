@@ -67,6 +67,7 @@ typedef struct
     bool persistent_learning;
     bool speedpp_enabled;
     bool target_overlay_enabled;
+    uint8_t audio_volume; /* 0..100 (%), 0 = mute */
     bool menu_open;
     bool help_open;
     bool ui_block_touch;
@@ -104,6 +105,8 @@ typedef struct
     bool accel_active;
     float accel_ax;
     float accel_ay;
+    uint8_t sfx_wall_bounce_count;
+    uint8_t sfx_paddle_hit_count;
 
     /* Runtime AI/NPU telemetry. */
     uint32_t ai_telemetry_start_cycles;

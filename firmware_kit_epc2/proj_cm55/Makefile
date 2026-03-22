@@ -57,6 +57,12 @@ COMPONENTS+=FREERTOS RTOS_AWARE
 
 ifeq ($(CONFIG_DISPLAY), WF101JTYAHMNB0_DISP)
 DEFINES += MTB_DISPLAY_EK79007AD3 MTB_CTP_ILI2511
+# Explicitly include 10.1-inch display/touch middleware for local flattened
+# asset layouts where auto include discovery may not add these paths.
+INCLUDES += ../../mtb_shared/display-tft-ek79007ad3/release-v1.0.0
+INCLUDES += ../../mtb_shared/touch-ctp-ili2511/release-v1.0.0
+SOURCES += ../../mtb_shared/display-tft-ek79007ad3/release-v1.0.0/mtb_display_ek79007ad3.c
+SOURCES += ../../mtb_shared/touch-ctp-ili2511/release-v1.0.0/mtb_ctp_ili2511.c
 # Ignore unused 7-inch display and touch driver files from compilation
 CY_IGNORE += $(SEARCH_display-dsi-waveshare-7-0-lcd-c)
 CY_IGNORE += $(SEARCH_touch-ctp-gt911)

@@ -106,7 +106,6 @@ void display_hal_fill_rect(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint1
             row[(uint32_t)x] = rgb565;
         }
     }
-    display_hal_present();
 }
 
 void display_hal_blit_rect(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint16_t *rgb565)

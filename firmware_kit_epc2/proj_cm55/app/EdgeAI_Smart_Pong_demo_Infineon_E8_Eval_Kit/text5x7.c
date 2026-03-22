@@ -169,7 +169,7 @@ int32_t edgeai_text5x7_width(int32_t scale, const char *s)
     return n * (5 + 1) * scale - 1 * scale;
 }
 
-void edgeai_text5x7_draw_scaled(int32_t x, int32_t y, int32_t scale, const char *s, uint16_t rgb565)
+void edgeai_text5x7_draw_scaled_no_present(int32_t x, int32_t y, int32_t scale, const char *s, uint16_t rgb565)
 {
     if (!s) return;
     int32_t cx = x;
@@ -179,6 +179,12 @@ void edgeai_text5x7_draw_scaled(int32_t x, int32_t y, int32_t scale, const char 
         cx += (5 + 1) * scale;
         s++;
     }
+}
+
+void edgeai_text5x7_draw_scaled(int32_t x, int32_t y, int32_t scale, const char *s, uint16_t rgb565)
+{
+    edgeai_text5x7_draw_scaled_no_present(x, y, scale, s, rgb565);
+    display_hal_present_frame();
 }
 
 void edgeai_text5x7_draw_scaled_sw(uint16_t *dst, uint32_t w, uint32_t h,

@@ -26,11 +26,25 @@ typedef struct
     bool touch_pressed;
     float touch_x;
     float touch_y;
+
+    bool vol_dn_pressed;
+    bool vol_up_pressed;
 } platform_input_t;
 
 typedef struct
 {
     bool prev_touch_active;
+    bool capsense_btns_initialized;
+    bool capsense_i2c_available;
+    bool capsense_i2c_initialized;
+    bool capsense_btn0_idle_raw;
+    bool capsense_btn1_idle_raw;
+    uint8_t capsense_i2c_btn0_idle;
+    uint8_t capsense_i2c_btn1_idle;
+    uint8_t capsense_btn0_prev_status;
+    uint8_t capsense_btn1_prev_status;
+    bool prev_vol_dn_raw;
+    bool prev_vol_up_raw;
     bool accel_present;
     uint8_t accel_addr7;
     float accel_ax_lp;

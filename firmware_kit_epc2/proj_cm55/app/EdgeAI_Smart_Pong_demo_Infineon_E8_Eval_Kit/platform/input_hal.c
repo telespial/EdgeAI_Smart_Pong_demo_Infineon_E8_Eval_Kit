@@ -5,6 +5,7 @@
 #include "edgeai_config.h"
 #include "cy_scb_i2c.h"
 #include "cy_syslib.h"
+#include "cy_gpio.h"
 #include "cycfg_peripherals.h"
 #include "platform/bmi270/bmi270.h"
 
@@ -13,6 +14,15 @@
 
 #define BMI270_ADDR0                        (0x68u)
 #define BMI270_ADDR1                        (0x69u)
+#define CAPSENSE_I2C_ADDR_APP               (0x08u)
+#define CAPSENSE_I2C_ADDR_BOOT_CMD          (0x09u)
+#define CAPSENSE_I2C_READ_LEN               (3u)
+
+#define CAPSENSE_I2C_BTN0_IDX               (0u)
+#define CAPSENSE_I2C_BTN1_IDX               (1u)
+#define CAPSENSE_I2C_SLIDER_IDX             (2u)
+#define CAPSENSE_BTN0_NOT_PRESSED           (0u)
+#define CAPSENSE_BTN1_NOT_PRESSED           (1u)
 
 extern cy_stc_scb_i2c_context_t disp_touch_i2c_controller_context;
 
@@ -53,6 +63,188 @@ static inline float clamp1f(float v)
 static inline float absf(float v)
 {
     return (v < 0.0f) ? -v : v;
+}
+
+static inline uint8_t capsense_decode_btn_status(uint8_t raw)
+{
+    /* PSoC4000T CapSense app commonly sends ASCII digits for BTN bytes. */
+    if ((raw >= (uint8_t)'0') && (raw <= (uint8_t)'9'))
+    {
+        return (uint8_t)(raw - (uint8_t)'0');
+    }
+    return raw;
+}
+
+static bool read_capsense_btn0_raw(void)
+{
+/* BTN0 / CS81 path: USER_BTN1 -> SW2 on this BSP. */
+#if defined(CYBSP_USER_BTN1_PORT) && defined(CYBSP_USER_BTN1_NUM)
+    return (Cy_GPIO_Read(CYBSP_USER_BTN1_PORT, CYBSP_USER_BTN1_NUM) != 0u);
+#elif defined(CYBSP_SW2_PORT) && defined(CYBSP_SW2_NUM)
+    return (Cy_GPIO_Read(CYBSP_SW2_PORT, CYBSP_SW2_NUM) != 0u);
+#elif defined(CYBSP_CSD_BTN0_PORT) && defined(CYBSP_CSD_BTN0_NUM)
+    return (Cy_GPIO_Read(CYBSP_CSD_BTN0_PORT, CYBSP_CSD_BTN0_NUM) != 0u);
+#else
+    return false;
+#endif
+}
+
+static bool read_capsense_btn1_raw(void)
+{
+/* BTN1 / CS82 path: USER_BTN2 -> SW4 on this BSP. */
+#if defined(CYBSP_USER_BTN2_PORT) && defined(CYBSP_USER_BTN2_NUM)
+    return (Cy_GPIO_Read(CYBSP_USER_BTN2_PORT, CYBSP_USER_BTN2_NUM) != 0u);
+#elif defined(CYBSP_SW4_PORT) && defined(CYBSP_SW4_NUM)
+    return (Cy_GPIO_Read(CYBSP_SW4_PORT, CYBSP_SW4_NUM) != 0u);
+#elif defined(CYBSP_CSD_BTN1_PORT) && defined(CYBSP_CSD_BTN1_NUM)
+    return (Cy_GPIO_Read(CYBSP_CSD_BTN1_PORT, CYBSP_CSD_BTN1_NUM) != 0u);
+#else
+    return false;
+#endif
+}
+
+static bool read_capsense_i2c_frame_addr(uint8_t addr7, uint8_t *out3)
+{
+    if (!out3) return false;
+
+    for (uint32_t r = 0u; r < EDGEAI_I2C_RETRY_COUNT; r++)
+    {
+        cy_en_scb_i2c_status_t rc = CY_SCB_I2C_SUCCESS;
+
+        if (disp_touch_i2c_controller_context.state == CY_SCB_I2C_IDLE)
+        {
+            rc = Cy_SCB_I2C_MasterSendStart(CYBSP_I2C_CONTROLLER_HW,
+                                            addr7,
+                                            CY_SCB_I2C_READ_XFER,
+                                            EDGEAI_I2C_TIMEOUT_MS,
+                                            &disp_touch_i2c_controller_context);
+        }
+        else
+        {
+            rc = Cy_SCB_I2C_MasterSendReStart(CYBSP_I2C_CONTROLLER_HW,
+                                              addr7,
+                                              CY_SCB_I2C_READ_XFER,
+                                              EDGEAI_I2C_TIMEOUT_MS,
+                                              &disp_touch_i2c_controller_context);
+        }
+        if (rc != CY_SCB_I2C_SUCCESS)
+        {
+            (void)Cy_SCB_I2C_MasterSendStop(CYBSP_I2C_CONTROLLER_HW,
+                                            EDGEAI_I2C_TIMEOUT_MS,
+                                            &disp_touch_i2c_controller_context);
+            continue;
+        }
+
+        bool ok = true;
+        for (uint32_t i = 0u; i < CAPSENSE_I2C_READ_LEN; i++)
+        {
+            cy_en_scb_i2c_command_t ack = (i + 1u < CAPSENSE_I2C_READ_LEN) ? CY_SCB_I2C_ACK : CY_SCB_I2C_NAK;
+            rc = Cy_SCB_I2C_MasterReadByte(CYBSP_I2C_CONTROLLER_HW,
+                                           ack,
+                                           &out3[i],
+                                           EDGEAI_I2C_TIMEOUT_MS,
+                                           &disp_touch_i2c_controller_context);
+            if (rc != CY_SCB_I2C_SUCCESS)
+            {
+                ok = false;
+                break;
+            }
+        }
+
+        (void)Cy_SCB_I2C_MasterSendStop(CYBSP_I2C_CONTROLLER_HW,
+                                        EDGEAI_I2C_TIMEOUT_MS,
+                                        &disp_touch_i2c_controller_context);
+        if (ok) return true;
+    }
+
+    return false;
+}
+
+static bool read_capsense_i2c_frame(uint8_t *out3)
+{
+    if (read_capsense_i2c_frame_addr(CAPSENSE_I2C_ADDR_APP, out3))
+    {
+        return true;
+    }
+    return read_capsense_i2c_frame_addr(CAPSENSE_I2C_ADDR_BOOT_CMD, out3);
+}
+
+static void capsense_widget_scan_init(input_hal_t *s)
+{
+    if (!s) return;
+    s->capsense_btn0_idle_raw = read_capsense_btn0_raw();
+    s->capsense_btn1_idle_raw = read_capsense_btn1_raw();
+    s->capsense_i2c_available = false;
+    s->capsense_i2c_initialized = false;
+    s->capsense_i2c_btn0_idle = CAPSENSE_BTN0_NOT_PRESSED;
+    s->capsense_i2c_btn1_idle = CAPSENSE_BTN1_NOT_PRESSED;
+    s->capsense_btn0_prev_status = 0u;
+    s->capsense_btn1_prev_status = 0u;
+    s->prev_vol_dn_raw = false;
+    s->prev_vol_up_raw = false;
+    s->capsense_btns_initialized = true;
+}
+
+static void capsense_widget_scan_poll(input_hal_t *s, bool *btn0_pressed, bool *btn1_pressed)
+{
+    if (!btn0_pressed || !btn1_pressed) return;
+    *btn0_pressed = false;
+    *btn1_pressed = false;
+    if (!s) return;
+    if (!s->capsense_btns_initialized)
+    {
+        capsense_widget_scan_init(s);
+    }
+
+    bool i2c_btn0_pressed = false;
+    bool i2c_btn1_pressed = false;
+    uint8_t frame[CAPSENSE_I2C_READ_LEN] = { 0u };
+
+    /* Preferred path: read dedicated PSoC4000T CapSense status over I2C. */
+    if (read_capsense_i2c_frame(frame))
+    {
+        uint8_t btn0 = capsense_decode_btn_status(frame[CAPSENSE_I2C_BTN0_IDX]);
+        uint8_t btn1 = capsense_decode_btn_status(frame[CAPSENSE_I2C_BTN1_IDX]);
+
+        s->capsense_i2c_available = true;
+        if (!s->capsense_i2c_initialized)
+        {
+            s->capsense_btn0_prev_status = 0u;
+            s->capsense_btn1_prev_status = 0u;
+            s->capsense_i2c_initialized = true;
+        }
+
+        /* Match Infineon reference protocol:
+         * BTN0 idle = 0, BTN1 idle = 1, active = any non-idle value. */
+        bool btn0_active = (btn0 != CAPSENSE_BTN0_NOT_PRESSED);
+        bool btn1_active = (btn1 != CAPSENSE_BTN1_NOT_PRESSED);
+        i2c_btn0_pressed = (btn0_active && (s->capsense_btn0_prev_status == 0u));
+        i2c_btn1_pressed = (btn1_active && (s->capsense_btn1_prev_status == 0u));
+        s->capsense_btn0_prev_status = btn0_active ? 1u : 0u;
+        s->capsense_btn1_prev_status = btn1_active ? 1u : 0u;
+    }
+    else
+    {
+        /* If I2C probe fails, gracefully fall back to GPIO alias path. */
+        s->capsense_i2c_available = false;
+        s->capsense_i2c_initialized = false;
+        s->capsense_btn0_prev_status = 0u;
+        s->capsense_btn1_prev_status = 0u;
+    }
+
+    /* Treat non-idle state as active to tolerate polarity differences. */
+    bool btn0_active = (read_capsense_btn0_raw() != s->capsense_btn0_idle_raw);
+    bool btn1_active = (read_capsense_btn1_raw() != s->capsense_btn1_idle_raw);
+
+    /* Rising edge on active state = one press event (widget activation). */
+    bool gpio_btn0_pressed = (btn0_active && !s->prev_vol_dn_raw);
+    bool gpio_btn1_pressed = (btn1_active && !s->prev_vol_up_raw);
+
+    *btn0_pressed = (i2c_btn0_pressed || gpio_btn0_pressed);
+    *btn1_pressed = (i2c_btn1_pressed || gpio_btn1_pressed);
+
+    s->prev_vol_dn_raw = btn0_active;
+    s->prev_vol_up_raw = btn1_active;
 }
 
 static bool input_i2c_reg_read(uint8_t addr7, uint8_t reg, uint8_t *buf, uint32_t len)
@@ -250,6 +442,8 @@ void input_hal_poll(input_hal_t *s, platform_input_t *out)
     out->accel_active = false;
     out->accel_ax = 0.0f;
     out->accel_ay = 0.0f;
+
+    capsense_widget_scan_poll(s, &out->vol_dn_pressed, &out->vol_up_pressed);
 
     if (s && s->accel_present)
     {
