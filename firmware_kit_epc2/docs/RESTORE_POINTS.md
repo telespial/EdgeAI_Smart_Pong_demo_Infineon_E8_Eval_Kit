@@ -10,11 +10,13 @@ Known-good checkpoints for fast recovery when development changes break boot, di
   - Meaning: Current development base for Smart Pong feature work.
 
 ## Expected Behavior At Current Baseline
-- Boot goes directly into gameplay (no startup title splash).
+- Boot shows centered `SMART` / `PONG` banner then enters gameplay.
 - Build/flash target: `KIT_PSE84_EVAL_EPC2` with `CONFIG_DISPLAY=W4P3INCH_DISP`.
 - Runtime tuning:
   - `EDGEAI_FIXED_FPS=180`
   - max ball speed cap: `+50%` over prior baseline.
+  - audio event tones and win tune enabled.
+  - volume UI row enabled (`VOL DN  xxx  UP`), default `VOL=60`.
 
 ## Restore Procedure
 1. Fetch tags:

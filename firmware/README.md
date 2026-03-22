@@ -72,6 +72,7 @@ Top bar:
 
 Alternate control sources:
 - Custom mappings can be routed through platform input HAL (`platform/input_hal.c`).
+- Volume events are also routed via platform input HAL (`VOL DN`/`VOL UP`).
 
 ## Settings
 
@@ -83,6 +84,7 @@ Alternate control sources:
 - `MATCH`: `11`, `100`, `1K` (`1K` uses `999` target)
 - `TARGET`: `ON`, `OFF`
 - `SPEED++`: `ON`, `OFF`
+- `VOL`: `0..100` (`0` = mute, `100` = max)
 - `New Game`: immediate score reset and clears `WINS` totals to `000`
 
 Current startup defaults (this workspace):
@@ -90,6 +92,7 @@ Current startup defaults (this workspace):
 - `D2`
 - `MATCH=100`
 - `PERSIST=OFF`
+- `VOL=60`
 
 ## AI and NPU Implementation
 
@@ -174,6 +177,7 @@ Persistence behavior:
 ## Features
 
 - 3D-look arena with depth cues, wall shading, segmented score digits
+- Startup banner: centered two-line `SMART` / `PONG`
 - `0P / 1P / 2P` modes
 - Ball-speed-linked color behavior
 - `0P` accelerometer perturbation of ball trajectory for live outcome nudging
@@ -184,6 +188,10 @@ Persistence behavior:
 - Optional `SPEED++` progression
 - `NEW GAME` clears both score and `WINS`
 - AI-driven serve variation
+- Event audio path (speaker): wall `226 Hz`, paddle `459 Hz`, point `490 Hz`, plus win tune
+- Settings row for volume: `VOL DN  xxx  UP`
+- Volume default on boot: `60`
+- CapSense volume path implemented in input HAL (I2C status frame + GPIO fallback)
 
 ## Build and Flash (Infineon E8 / ModusToolbox)
 

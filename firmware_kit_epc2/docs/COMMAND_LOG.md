@@ -18,3 +18,11 @@
 14. Committed/pushed golden-baseline docs update (`b78e773`) and pushed restore tags (`failsafe_*`, `golden_*`).
 15. Replaced Smart Pong prep placeholder with first playable loop in `smart_pong_app.c`.
 16. Built and flashed playable Pong image; OpenOCD write/verify passed on `PSE846GPS2DBZC4A`.
+
+## 2026-03-22
+1. Rebuilt and programmed current Pong baseline from `firmware_kit_epc2` with `CONFIG_DISPLAY=W4P3INCH_DISP`.
+2. Verified OpenOCD flash/verify success on `PSE846GPS2DBZC4A` and `Boot Status : CYBOOT_SUCCESS`.
+3. Committed current flashed Pong source baseline on `main` (`8cdead3`).
+4. Moved `golden-e8-smart-pong` and `failsafe-e8-smart-pong` tags to commit `8cdead3` and pushed tags.
+5. Synced root `README.md` and `firmware/README.md` with current startup/audio/volume behavior.
+6. Updated `PROJECT_STATE.md`, `RESTORE_POINTS.md`, and `OPS_RUNBOOK.md` to match the current baseline.
