@@ -15,6 +15,12 @@
 
 - `/home/user/projects/embedded/codemaster/projects/Infineon/PSOC_EDGE_E8_EVAL/firmware_kit_epc2`
 
+## Current Visual/Runtime Behavior
+
+- Startup now skips the `SMART PONG` title card and enters gameplay directly.
+- Fixed-step target increased to `180 FPS` (from `60 FPS`) for faster update cadence.
+- Ball max speed cap increased by `+50%` over the prior baseline.
+
 ## Control Tuning
 
 - Accel outputs:

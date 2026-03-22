@@ -174,6 +174,7 @@ Persistence behavior:
 ## Features
 
 - 3D-look arena with depth cues, wall shading, segmented score digits
+- Direct-to-game startup (no title splash transition)
 - `0P / 1P / 2P` modes
 - Ball-speed-linked color behavior
 - `0P` accelerometer perturbation of ball trajectory for live outcome nudging

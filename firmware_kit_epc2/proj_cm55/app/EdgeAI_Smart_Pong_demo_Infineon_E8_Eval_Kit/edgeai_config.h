@@ -24,7 +24,7 @@
 
 /* Fixed-timestep target. */
 #ifndef EDGEAI_FIXED_FPS
-#define EDGEAI_FIXED_FPS 60
+#define EDGEAI_FIXED_FPS 180
 #endif
 
 /* UI: reserve a top bar region for the settings pill. */

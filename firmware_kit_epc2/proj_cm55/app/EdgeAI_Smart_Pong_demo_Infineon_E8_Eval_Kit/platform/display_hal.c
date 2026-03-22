@@ -25,7 +25,7 @@ static inline bool display_hal_is_ready(void)
 static inline void display_hal_present(void)
 {
     /* Wait for frame boundary, then atomically flip to the completed back buffer. */
-    (void)ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(25));
+    (void)ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(8));
     SCB_CleanDCache();
     Cy_GFXSS_Set_FrameBuffer((GFXSS_Type *)GFXSS, (uint32_t *)s_fb_back, &gfx_context);
     uint16_t *tmp = s_fb_front;

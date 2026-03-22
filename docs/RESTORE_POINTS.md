@@ -7,6 +7,14 @@ This repo uses two tags to mark known recoverable firmware states:
 
 Both tags are intended to point to a verified build+flash commit.
 
+## Current Tagged Baseline Intent
+
+Current baseline includes:
+- Direct-to-game startup (no `SMART PONG` splash title phase)
+- `EDGEAI_FIXED_FPS=180`
+- Higher gameplay pace with max ball speed cap tuned to `+50%` over prior baseline
+- Verified build/program on `KIT_PSE84_EVAL_EPC2` with `CONFIG_DISPLAY=W4P3INCH_DISP`
+
 ## Restore to Golden/Failsafe
 
 ```bash

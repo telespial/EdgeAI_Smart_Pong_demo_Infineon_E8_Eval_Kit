@@ -4,7 +4,7 @@
 PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 
 ## Date
-2026-03-21
+2026-03-22
 
 ## Working Hardware
 - Kit: `KIT_PSE84_EVAL_EPC2`
@@ -19,20 +19,22 @@ PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 
 ## Firmware State
 - Build and program path verified with OpenOCD + KitProg3
-- Latest visible change confirmed on device: `SMART PONG - PORT PREP`
-- Smart Pong prep module added at `proj_cm55/app/EdgeAI_Smart_Pong_demo_Infineon_E8_Eval_Kit/`
-- Full project rebuild completed successfully after Smart Pong scaffolding changes
-- Smart Pong prep image flashed and boot verified on kit (2026-03-21)
-- First playable Pong loop implemented and flashed (ball + paddles + score + touch paddle control)
+- Latest visible behavior confirmed on device: boots directly into live game
+- Smart Pong app path: `proj_cm55/app/EdgeAI_Smart_Pong_demo_Infineon_E8_Eval_Kit/`
+- Full project rebuild/program verified after gameplay tuning and startup changes
+- Current tuning validated on hardware:
+  - `EDGEAI_FIXED_FPS=180`
+  - Max ball speed cap increased by `+50%` over prior baseline
+  - Startup splash removed to avoid text corruption transition
 
 ## Recent Changes
-1. Added Smart Pong scaffold entry module (`smart_pong_app.c/.h`)
-2. Added runtime switch in `proj_cm55/main.c` via `APP_SMART_PONG_MODE`
-3. Added docs framework: START_HERE, RUNBOOK, HARDWARE_SETUP, TODO, COMMAND_LOG, SMART_PONG_PORT_PLAN
-4. Enabled Smart Pong prep mode and verified boot on hardware
-5. Added restore-points framework (`docs/RESTORE_POINTS.md`) for golden/failsafe rollback
+1. Raised fixed-step loop target from `60` to `180` FPS.
+2. Increased global ball speed cap by `+50%`.
+3. Removed boot title draw path so startup enters gameplay directly.
+4. Rebuilt and programmed successfully on E8 EPC2 + 4.3-inch display profile.
+5. Updated restore-point documentation for new golden/failsafe baseline.
 
 ## Next Milestones
-1. Tune gameplay feel (speed, paddle size, collision response)
-2. Add HUD polish (winner splash, restart animation)
-3. Split app into `game/input/render` modules after behavior stabilizes
+1. Add classic Pong audio cues (wall vs paddle event tones) through E8 audio path.
+2. Finalize audio level/latency tuning against speaker output.
+3. Continue gameplay polish and render artifact hardening under high speed.

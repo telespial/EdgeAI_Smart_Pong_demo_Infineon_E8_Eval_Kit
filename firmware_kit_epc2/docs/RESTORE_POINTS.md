@@ -3,14 +3,18 @@
 ## Purpose
 Known-good checkpoints for fast recovery when development changes break boot, display, or flashing.
 
-## Tagged Restore Points
-- `failsafe_music_custom_build_2026_03_21`
-  - Meaning: Last stable LVGL music-demo baseline with the custom banner path.
-  - Expected screen: Music demo + `CUSTOM BUILD` text.
+## Tagged Restore Points (Repo-Level)
+- `failsafe-e8-smart-pong`
+  - Meaning: Last known-stable Smart Pong restore point for rapid recovery.
+- `golden-e8-smart-pong`
+  - Meaning: Current development base for Smart Pong feature work.
 
-- `golden_smart_pong_prep_boot_2026_03_21`
-  - Meaning: Current golden baseline for Smart Pong bring-up.
-  - Expected screen: `SMART PONG - PORT PREP`.
+## Expected Behavior At Current Baseline
+- Boot goes directly into gameplay (no startup title splash).
+- Build/flash target: `KIT_PSE84_EVAL_EPC2` with `CONFIG_DISPLAY=W4P3INCH_DISP`.
+- Runtime tuning:
+  - `EDGEAI_FIXED_FPS=180`
+  - max ball speed cap: `+50%` over prior baseline.
 
 ## Restore Procedure
 1. Fetch tags:
@@ -23,10 +27,10 @@ Known-good checkpoints for fast recovery when development changes break boot, di
    ```
 3. Build/program using runbook environment:
    ```bash
-   make clean TOOLCHAIN=GCC_ARM
-   make program TOOLCHAIN=GCC_ARM
+    make clean TOOLCHAIN=GCC_ARM
+    make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP
    ```
 
 ## Notes
-- Use `failsafe_*` when recovering from major regressions.
-- Use `golden_*` as the default base for new Pong feature work.
+- Use `failsafe-e8-smart-pong` when recovering from major regressions.
+- Use `golden-e8-smart-pong` as the default base for new feature work.

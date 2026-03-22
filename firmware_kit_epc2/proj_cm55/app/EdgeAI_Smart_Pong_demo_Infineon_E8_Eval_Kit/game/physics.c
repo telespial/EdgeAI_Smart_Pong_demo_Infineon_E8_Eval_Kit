@@ -210,8 +210,8 @@ static void physics_get_tuning(const pong_game_t *g, float *serve_speed, float *
     if (serve_speed) *serve_speed *= s;
     if (vlim) *vlim *= s;
 
-    /* Requested: double max speed cap for every difficulty setting. */
-    if (vlim) *vlim *= 2.0f;
+    /* Raise global max ball-speed cap by +50% across settings. */
+    if (vlim) *vlim *= 1.5f;
 }
 
 void physics_reset_ball(pong_game_t *g, int serve_dir)
