@@ -32,6 +32,7 @@ Demonstrate deployment-style tradeoffs:
 - Manufacturer: Waveshare
 - Name: 4.3" Raspberry Pi DSI display (800x480) with touch panel
 - Display config: `W4P3INCH_DISP`
+- Display support policy: 4.3-inch only in this repository (`CONFIG_DISPLAY=W4P3INCH_DISP` enforced)
 
 - Accelerometer source on E8 platform:
 - Bosch BMI270 (board-level integration used by current platform HAL)

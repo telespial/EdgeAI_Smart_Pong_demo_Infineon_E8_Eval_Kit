@@ -26,3 +26,10 @@
 4. Moved `golden-e8-smart-pong` and `failsafe-e8-smart-pong` tags to commit `8cdead3` and pushed tags.
 5. Synced root `README.md` and `firmware/README.md` with current startup/audio/volume behavior.
 6. Updated `PROJECT_STATE.md`, `RESTORE_POINTS.md`, and `OPS_RUNBOOK.md` to match the current baseline.
+7. Removed alternate display support from active firmware path:
+   - `proj_cm55/Makefile` now enforces `CONFIG_DISPLAY=W4P3INCH_DISP` only.
+   - non-4.3 display middleware paths are excluded.
+   - touch HAL path pinned to FT5406 for 4.3 profile.
+8. Verified build success on 4.3 profile and verified fail-fast behavior for non-4.3 profile.
+9. Reflashed 4.3 profile and confirmed OpenOCD write/verify success with `Boot Status : CYBOOT_SUCCESS`.
+10. Synced docs for 4.3-only EPC2 release baseline and restore workflow.

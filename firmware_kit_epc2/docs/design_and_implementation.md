@@ -2,13 +2,14 @@
 
 ## Design and implementation
 
-This project supports three displays :
+This project is now locked to one display profile:
 
-   **[Waveshare 4.3-inch Raspberry Pi DSI LCD display](https://www.waveshare.com/4.3inch-DSI-LCD.htm):** The LCD houses a Chipone ICN6211 display controller and uses the MIPI DSI interface
+   **[Waveshare 4.3-inch Raspberry Pi DSI LCD display](https://www.waveshare.com/4.3inch-DSI-LCD.htm):** The LCD houses a Chipone ICN6211 display controller and uses the MIPI DSI interface.
 
-   **[Waveshare 7-inch Raspberry Pi DSI LCD C display](https://www.waveshare.com/7inch-dsi-lcd-c.htm)**: The LCD houses a Chipone ICN6211 display controller and uses the MIPI DSI interface
-
-   **[10.1 inch WF101JTYAHMNB0](https://www.winstar.com.tw/products/tft-lcd/ips-tft/ips-touch.html):** The TFT LCD houses a [EK79007AD3](https://www.crystalfontz.com/controllers/Fitipower/EK79007AD3/505/) display controller and uses the MIPI DSI interface. This display is supported by default
+Build-time enforcement:
+- `CONFIG_DISPLAY` must be `W4P3INCH_DISP`.
+- Non-4.3 display configs are rejected by `proj_cm55/Makefile` with an explicit build error.
+- Touch path is fixed to FT5406 on this profile.
 
 The design of this application is minimalistic to get started with code examples on PSOC&trade; Edge MCU devices. All PSOC&trade; Edge E84 MCU applications have a dual-CPU three-project structure to develop code for the CM33 and CM55 cores. The CM33 core has two separate projects for the secure processing environment (SPE) and non-secure processing environment (NSPE). A project folder consists of various subfolders, each denoting a specific aspect of the project. The three project folders are as follows:
 

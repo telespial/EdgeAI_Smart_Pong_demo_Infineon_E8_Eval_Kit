@@ -4,11 +4,7 @@
 
 #include "edgeai_config.h"
 #include "lv_port_disp.h"
-#if defined(MTB_CTP_ILI2511)
-#include "mtb_ctp_ili2511.h"
-#elif defined(MTB_CTP_FT5406)
 #include "mtb_ctp_ft5406.h"
-#endif
 
 static bool s_touch_ok = true;
 
@@ -25,19 +21,6 @@ void touch_hal_poll(edgeai_touch_state_t *out)
     int touch_x = 0;
     int touch_y = 0;
 
-#if defined(MTB_CTP_ILI2511)
-    cy_rslt_t rslt = mtb_ctp_ili2511_get_single_touch(&touch_x, &touch_y);
-    if (rslt == CY_RSLT_ILI2511_NO_TOUCH)
-    {
-        s_touch_ok = true;
-        return;
-    }
-    if (CY_RSLT_SUCCESS != rslt)
-    {
-        s_touch_ok = false;
-        return;
-    }
-#elif defined(MTB_CTP_FT5406)
     mtb_ctp_touch_event_t touch_event;
     cy_rslt_t rslt = (cy_rslt_t)mtb_ctp_ft5406_get_single_touch(&touch_event, &touch_x, &touch_y);
     if (CY_RSLT_SUCCESS != rslt)
@@ -51,10 +34,6 @@ void touch_hal_poll(edgeai_touch_state_t *out)
         s_touch_ok = true;
         return;
     }
-#else
-    s_touch_ok = false;
-    return;
-#endif
 
     s_touch_ok = true;
 

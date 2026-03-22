@@ -16,6 +16,7 @@ PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 - `TOOLCHAIN=GCC_ARM`
 - `CONFIG_DISPLAY=W4P3INCH_DISP`
 - `APP_SMART_PONG_MODE=1` (golden active mode)
+- Build guard enabled: non-`W4P3INCH_DISP` configs fail immediately in `proj_cm55/Makefile`
 
 ## Firmware State
 - Build and program path verified with OpenOCD + KitProg3
@@ -36,8 +37,9 @@ PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 4. Added event audio + win tune and runtime volume control in settings.
 5. Added volume event path (`VOL DN`/`VOL UP`) through input HAL.
 6. Rebuilt and programmed successfully on E8 EPC2 + 4.3-inch display profile.
+7. Removed 10.1/alternate display path from active build and touch HAL routing.
 
 ## Next Milestones
 1. Complete end-to-end validation for CS81/CS82 touch path with bridge firmware state.
 2. Continue gameplay polish and render artifact hardening under high speed.
-3. Keep 4.3-inch as baseline while preserving optional 10.1-inch build path.
+3. Keep 4.3-inch EPC2 path as the only supported and release-pinned target.

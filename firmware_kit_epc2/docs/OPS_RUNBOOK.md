@@ -20,6 +20,12 @@ make build TOOLCHAIN=GCC_ARM
 make program TOOLCHAIN=GCC_ARM
 ```
 
+For release/golden builds in this repo, always use:
+```bash
+make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP
+make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP
+```
+
 ## Toggle Smart Pong Mode
 Edit `proj_cm55/Makefile`:
 ```make
@@ -36,3 +42,4 @@ During flash logs, confirm:
 ## Troubleshooting
 - If build cannot find tools, re-export env vars above.
 - If flash works but no display, validate hardware jumpers and `CONFIG_DISPLAY`.
+- If `CONFIG_DISPLAY` is not `W4P3INCH_DISP`, build is expected to fail by design.

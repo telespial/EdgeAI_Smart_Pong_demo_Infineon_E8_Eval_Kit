@@ -12,6 +12,7 @@ Known-good checkpoints for fast recovery when development changes break boot, di
 ## Expected Behavior At Current Baseline
 - Boot shows centered `SMART` / `PONG` banner then enters gameplay.
 - Build/flash target: `KIT_PSE84_EVAL_EPC2` with `CONFIG_DISPLAY=W4P3INCH_DISP`.
+- Display support is pinned to 4.3-inch only (non-4.3 configs are intentionally blocked).
 - Runtime tuning:
   - `EDGEAI_FIXED_FPS=180`
   - max ball speed cap: `+50%` over prior baseline.

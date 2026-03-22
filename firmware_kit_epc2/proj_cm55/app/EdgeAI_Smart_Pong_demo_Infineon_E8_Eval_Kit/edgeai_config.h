@@ -2,17 +2,9 @@
 
 #include <stdint.h>
 
-/* Display geometry follows the selected panel profile from CONFIG_DISPLAY.
- *  - W4P3INCH_DISP / W4P7INCH-style profile -> MTB_DISPLAY_W4P3INCH_RPI (800x480 active)
- *  - WF101JTYAHMNB0_DISP                      -> default path (1024x600 active)
- */
-#if defined(MTB_DISPLAY_W4P3INCH_RPI)
+/* Project is locked to 4.3-inch display profile (800x480). */
 #define EDGEAI_LCD_W 800
 #define EDGEAI_LCD_H 480
-#else
-#define EDGEAI_LCD_W 1024
-#define EDGEAI_LCD_H 600
-#endif
 
 /* Accelerometer normalization.
  * FXLS8974 configuration yields roughly ~512 counts per 1g in the current mode.
