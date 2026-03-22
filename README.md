@@ -190,6 +190,7 @@ Persistence behavior:
 - `SKILL` side-selectable adaptive AI vs baseline ALGO (`2AI`, `AI/ALGO`, `ALGO/AI`)
 - Optional `SPEED++` progression
 - `NEW GAME` clears both score and `WINS`
+- Win counter fix: `WINS` increments only after a completed match, not on menu/reset changes
 - AI-driven serve variation
 - Event audio path (speaker): wall `226 Hz`, paddle `459 Hz`, point `490 Hz`, plus win tune
 - Settings row for volume: `VOL DN  xxx  UP`

@@ -441,6 +441,7 @@ void game_init(pong_game_t *g)
     g->winner_left = false;
     g->end_prompt_dismissed = false;
     g->countdown_active = false;
+    g->score_totals_pending = false;
 
     g->rng = 1u;
     g->frame = 0;
@@ -501,14 +502,18 @@ void game_reset(pong_game_t *g)
 {
     if (!g) return;
 
-    if (g->score.left > g->score.right)
+    if (g->score_totals_pending)
     {
-        if (g->score_total_left < 999u) g->score_total_left++;
+        if (g->score.left > g->score.right)
+        {
+            if (g->score_total_left < 999u) g->score_total_left++;
+        }
+        else if (g->score.right > g->score.left)
+        {
+            if (g->score_total_right < 999u) g->score_total_right++;
+        }
     }
-    else if (g->score.right > g->score.left)
-    {
-        if (g->score_total_right < 999u) g->score_total_right++;
-    }
+    g->score_totals_pending = false;
 
     ai_learning_sync_store(g);
 
@@ -650,6 +655,7 @@ void game_step(pong_game_t *g, const platform_input_t *in, float dt)
     if (reached_match_score || reached_max_score)
     {
         g->match_over = true;
+        g->score_totals_pending = true;
         g->winner_left = (g->score.left >= g->score.right);
         g->end_prompt_dismissed = reached_max_score || (g->mode == kGameModeZeroPlayer);
         g->match_over_frame = g->frame;

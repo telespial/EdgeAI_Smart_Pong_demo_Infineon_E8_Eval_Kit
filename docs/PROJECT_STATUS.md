@@ -25,6 +25,9 @@
 - Runtime app selection is pinned to Smart Pong in the build flags:
   - `APP_INSULIN_PUMP_MODE=0`
   - `APP_SMART_PONG_MODE=1`
+- Bottom `WINS` counter logic fixed:
+  - Match wins now increment only after a real match completion.
+  - Menu/config resets no longer accidentally increment wins.
 
 ## Control Tuning
 
