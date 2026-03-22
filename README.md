@@ -1,5 +1,7 @@
 # EdgeAI Smart Pong - Infineon PSOC Edge E8 Evaluation Kit
 
+![Uploading Infineon_Smart_Pong.jpg…]()
+
 ## Real World AI Learning Demonstration
 
 Compare three control behaviors in the same system:
