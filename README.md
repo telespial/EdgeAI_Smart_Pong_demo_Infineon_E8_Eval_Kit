@@ -195,8 +195,8 @@ Persistence behavior:
 - Settings row for volume: `VOL DN  xxx  UP`
 - Volume default on boot: `60`
 - CapSense volume path implemented in input HAL (I2C status frame + GPIO fallback)
-- Competitive AI tuning: higher lead/chase behavior with reduced EdgeAI noise
-- Easy-ball lock: close-range returns force analytic intercept (reduced style/noise misses)
+- Competitive AI tuning: mixed-mode balancing reduces EdgeAI dominance so ALGO can score consistently
+- Easy-ball lock: close-range returns still favor analytic intercept, but with less aggressive lock/speed boosts
 
 ## Build and Flash (Infineon E8 / ModusToolbox)
 
@@ -210,6 +210,11 @@ export CY_TOOL_edgeprotecttools_EXE_ABS=/home/user/toolchains/infineon/ModusTool
 make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8
 make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP
 ```
+
+Latest verified flash checkpoint:
+- Date: `2026-03-22`
+- Board: `PSE846GPS2DBZC4A` (EPC2, Rev `B0`)
+- Runtime mode target: `APP_INSULIN_PUMP_MODE=0`, `APP_SMART_PONG_MODE=1` (Smart Pong boot path)
 
 Optional helper scripts:
 

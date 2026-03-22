@@ -10,10 +10,17 @@ Both tags are intended to point to a verified build+flash commit.
 ## Current Tagged Baseline Intent
 
 Current baseline includes:
-- Direct-to-game startup (no `SMART PONG` splash title phase)
+- Smart Pong runtime selected by build flags (`APP_INSULIN_PUMP_MODE=0`, `APP_SMART_PONG_MODE=1`)
+- Two-line `SMART` / `PONG` startup title
 - `EDGEAI_FIXED_FPS=180`
 - Higher gameplay pace with max ball speed cap tuned to `+50%` over prior baseline
+- Mixed-mode AI balancing update (reduced EdgeAI dominance, improved ALGO scoring opportunity)
 - Verified build/program on `KIT_PSE84_EVAL_EPC2` with `CONFIG_DISPLAY=W4P3INCH_DISP`
+
+Most recent verification:
+- Date: `2026-03-22`
+- Device: `PSE846GPS2DBZC4A` (Rev `B0`)
+- Program artifact: `firmware_kit_epc2/build/app_combined.hex`
 
 ## Restore to Golden/Failsafe
 

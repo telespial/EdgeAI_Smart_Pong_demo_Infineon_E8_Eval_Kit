@@ -868,11 +868,11 @@ static float ai_noise(const pong_game_t *g, bool right_side)
         }
         if (g->ai_learn_mode != kAiLearnModeBoth)
         {
-            n *= 0.85f;
+            n *= 0.95f;
         }
         if (g->ai_enabled)
         {
-            n *= 0.60f;
+            n *= 0.92f;
         }
     }
 
@@ -907,7 +907,7 @@ static float ai_max_speed(const pong_game_t *g, bool right_side)
         }
         if (g->ai_learn_mode != kAiLearnModeBoth)
         {
-            s *= 1.08f;
+            s *= 1.00f;
         }
     }
 
@@ -939,12 +939,12 @@ static float ai_dynamic_lead_gain(const pong_game_t *g, bool side_edgeai, float 
 
     confidence = clampf(confidence, 0.0f, 1.0f);
     float conf_w = 0.70f + (0.30f * confidence);
-    float gain = 1.0f + (0.30f * speed_w) + (0.34f * eta_w) + (0.36f * speed_w * eta_w * conf_w);
+    float gain = 1.0f + (0.22f * speed_w) + (0.24f * eta_w) + (0.22f * speed_w * eta_w * conf_w);
 
-    if (side_edgeai) gain += 0.10f;
-    if (mixed_mode) gain += 0.08f;
+    if (side_edgeai) gain += 0.03f;
+    if (mixed_mode) gain += 0.00f;
 
-    return clampf(gain, 1.0f, 1.95f);
+    return clampf(gain, 1.0f, 1.65f);
 }
 
 static void ai_update_telemetry_window(pong_game_t *g)
@@ -991,7 +991,7 @@ static bool ai_easy_ball_lock(const pong_game_t *g, const pong_paddle_t *p, bool
     }
 
     /* Tight interception window: favor pure intercept over style/lead. */
-    return (t_hit <= 0.32f) || (gap <= 0.16f);
+    return (t_hit <= 0.24f) || (gap <= 0.12f);
 }
 
 static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_side)
@@ -1063,7 +1063,7 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
                         float dtau = absf(t_hit - t_ref);
                         float disagreement = dy + dz + (0.60f * dtau);
 
-                        float npu_w = 0.16f;
+                        float npu_w = 0.10f;
                         if (disagreement >= 0.22f)
                         {
                             npu_w = 0.0f;
@@ -1121,14 +1121,14 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
                 {
                     int32_t diff = right_side ? ((int32_t)g->score.left - (int32_t)g->score.right)
                                               : ((int32_t)g->score.right - (int32_t)g->score.left);
-                    if (diff >= 2)
+                    if (diff >= 3)
                     {
                         float catchup = clampf(((float)diff - 1.0f) * 0.12f, 0.0f, 0.35f);
                         lead *= (1.0f + catchup);
                     }
                 }
                 float t_use = clampf(t_hit, 0.0f, 0.80f);
-                float k = (lead - 1.0f) * 0.82f;
+                float k = (lead - 1.0f) * 0.66f;
                 y_hit += g->ball.vy * t_use * k;
                 z_hit += g->ball.vz * t_use * k;
 
@@ -1141,7 +1141,7 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
                     {
                         float vx_w = clampf((absf(g->ball.vx) - 0.30f) * (1.0f / 1.60f), 0.0f, 1.0f);
                         float eta_w = clampf(1.0f - (t_use * (1.0f / 0.80f)), 0.0f, 1.0f);
-                        float dir_gain = 0.050f + (0.060f * vx_w * eta_w);
+                        float dir_gain = 0.038f + (0.042f * vx_w * eta_w);
                         y_hit += signf_nonzero(g->ball.vy) * dir_gain * (vxy / vsum);
                         z_hit += signf_nonzero(g->ball.vz) * dir_gain * (vxz / vsum);
                     }
@@ -1161,10 +1161,23 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
 
             /* Add small noise to avoid perfect play. */
             float noise = ai_noise(g, right_side);
-            if (easy_lock) noise *= 0.20f;
+            if (easy_lock) noise *= 0.60f;
             if (side_edgeai && g->ai_enabled && ball_toward)
             {
-                noise *= 0.55f;
+                noise *= 0.90f;
+            }
+
+            /* In mixed AI/ALGO modes, if EdgeAI is comfortably ahead, add slight
+             * variability so ALGO can still score and comparison stays informative. */
+            if (side_edgeai && (g->ai_learn_mode != kAiLearnModeBoth))
+            {
+                int32_t lead_pts = right_side ? ((int32_t)g->score.right - (int32_t)g->score.left)
+                                              : ((int32_t)g->score.left - (int32_t)g->score.right);
+                if (lead_pts >= 4)
+                {
+                    float bonus = clampf(((float)lead_pts - 3.0f) * 0.08f, 0.0f, 0.30f);
+                    noise *= (1.0f + bonus);
+                }
             }
             y_hit += rand_f(g, -noise, noise);
             z_hit += rand_f(g, -noise, noise);
@@ -1187,15 +1200,26 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
     if (ball_toward)
     {
         float chase_w = clampf((absf(g->ball.vx) - 0.40f) * (1.0f / 1.50f), 0.0f, 1.0f);
-        max_speed *= (1.0f + (0.30f * chase_w));
+        max_speed *= (1.0f + (0.16f * chase_w));
         if (side_edgeai && g->ai_enabled)
         {
-            max_speed *= 1.15f;
+            max_speed *= 1.00f;
         }
 
         if (ai_easy_ball_lock(g, p, right_side, 0.25f))
         {
-            max_speed *= 1.35f;
+            max_speed *= 1.05f;
+        }
+
+        if (side_edgeai && (g->ai_learn_mode != kAiLearnModeBoth))
+        {
+            int32_t lead_pts = right_side ? ((int32_t)g->score.right - (int32_t)g->score.left)
+                                          : ((int32_t)g->score.left - (int32_t)g->score.right);
+            if (lead_pts >= 4)
+            {
+                float cut = clampf(((float)lead_pts - 3.0f) * 0.03f, 0.0f, 0.12f);
+                max_speed *= (1.0f - cut);
+            }
         }
     }
     float max_step = max_speed * dt;

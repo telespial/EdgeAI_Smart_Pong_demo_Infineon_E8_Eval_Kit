@@ -30,3 +30,7 @@ make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP
 - Ensure board power and debug cable are connected.
 - If boot behavior is unexpected, confirm board boot switch settings.
 - If display is blank after flash, re-check display config (`W4P3INCH_DISP`) and known working restore tag.
+- If combine/sign fails with `EdgeProtect Secure Suite not found`, verify:
+  - `CY_TOOL_edgeprotecttools_EXE_ABS` points to a valid `edgeprotecttools` binary.
+  - Example known-good path:
+    `/home/user/toolchains/infineon/ModusToolbox_local/opt/Tools/ModusToolbox-Edge-Protect-Security-Suite-1.6.1/tools/edgeprotecttools/bin/edgeprotecttools`

@@ -83,14 +83,19 @@ SOURCES+=
 # directories (without a leading -I).
 INCLUDES+=
 INCLUDES+=./app/EdgeAI_Smart_Pong_demo_Infineon_E8_Eval_Kit
+INCLUDES+=./app/EdgeAI_Insulin_Pump_Infineon_E8_Eval_Kit
 
-# Local workspace may include parallel app experiments; exclude them from
-# Smart Pong release builds unless explicitly integrated.
-CY_IGNORE += ./app/EdgeAI_Insulin_Pump_Infineon_E8_Eval_Kit
+# Keep upstream NXP snapshot as reference-only (not compiled in Infineon build).
+CY_IGNORE += ./app/EdgeAI_Insulin_Pump_Infineon_E8_Eval_Kit/upstream_nxp
+# Use Smart Pong text renderer globally to avoid duplicate text5x7 symbols.
+CY_IGNORE += ./app/EdgeAI_Insulin_Pump_Infineon_E8_Eval_Kit/ported_nxp/text5x7.c
 
 # Add additional defines to the build process (without a leading -D).
 DEFINES+=CY_RETARGET_IO_CONVERT_LF_TO_CRLF _BAREMETAL=0
-# Set to 1 to run Smart Pong prep screen instead of LVGL music demo.
+# Runtime app mode selection.
+# APP_INSULIN_PUMP_MODE=1 boots the insulin pump port runtime.
+# APP_SMART_PONG_MODE=1 boots Smart Pong when insulin mode is disabled.
+DEFINES+=APP_INSULIN_PUMP_MODE=0
 DEFINES+=APP_SMART_PONG_MODE=1
 
 # Check which kit is being used

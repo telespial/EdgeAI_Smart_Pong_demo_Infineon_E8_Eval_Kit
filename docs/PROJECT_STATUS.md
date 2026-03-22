@@ -9,7 +9,9 @@
 
 - Mode: `P0`
 - Difficulty: `D2`
-- Skill: `ALGO/AI` (left ALGO, right EDGEAI)
+- Match: `100`
+- Persistence: `OFF`
+- Volume: `60`
 
 ## Active Firmware Path
 
@@ -17,9 +19,12 @@
 
 ## Current Visual/Runtime Behavior
 
-- Startup now skips the `SMART PONG` title card and enters gameplay directly.
+- Startup shows two-line `SMART` / `PONG` title, then enters gameplay.
 - Fixed-step target increased to `180 FPS` (from `60 FPS`) for faster update cadence.
 - Ball max speed cap increased by `+50%` over the prior baseline.
+- Runtime app selection is pinned to Smart Pong in the build flags:
+  - `APP_INSULIN_PUMP_MODE=0`
+  - `APP_SMART_PONG_MODE=1`
 
 ## Control Tuning
 
@@ -28,6 +33,15 @@
   - `accel_ay = -sensor Y`
 - P0 vertical nudge:
   - `g->ball.vy -= ay * k * dt`
+
+## AI Balance Status (2026-03-22)
+
+- Mixed-mode EdgeAI strength reduced to avoid 99% win behavior.
+- Key balancing changes:
+  - Lower lead/chase aggressiveness
+  - Lower NPU blend weight in mixed mode
+  - Higher mixed-mode noise / reduced precision boosts
+  - Score-lead anti-runaway handicap retained
 
 ## Restore Policy
 
