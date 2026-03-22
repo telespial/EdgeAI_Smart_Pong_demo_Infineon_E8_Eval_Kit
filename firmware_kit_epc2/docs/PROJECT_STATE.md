@@ -29,6 +29,9 @@ PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
   - Audio events mapped: wall `226 Hz`, paddle `459 Hz`, point `490 Hz`, win tune
   - Volume control range `0..100`, boot default `60`, settings row `VOL DN  xxx  UP`
   - CapSense volume path implemented in input HAL (I2C status + GPIO fallback)
+  - Aggressive AI lead/chase retune with reduced EdgeAI noise
+  - Easy-ball lock enabled (close-range analytic intercept to prevent simple misses)
+  - Local build exclusion for parallel insulin app folder to keep Pong release path clean
 
 ## Recent Changes
 1. Raised fixed-step loop target from `60` to `180` FPS.
@@ -38,6 +41,9 @@ PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 5. Added volume event path (`VOL DN`/`VOL UP`) through input HAL.
 6. Rebuilt and programmed successfully on E8 EPC2 + 4.3-inch display profile.
 7. Removed 10.1/alternate display path from active build and touch HAL routing.
+8. Added multiple AI lead/chase tuning passes with hardware validation flashes.
+9. Added easy-ball lock logic to cut close-range misses.
+10. Excluded parallel insulin app folder from CM55 build via `CY_IGNORE` in `proj_cm55/Makefile`.
 
 ## Next Milestones
 1. Complete end-to-end validation for CS81/CS82 touch path with bridge firmware state.

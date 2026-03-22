@@ -84,6 +84,10 @@ SOURCES+=
 INCLUDES+=
 INCLUDES+=./app/EdgeAI_Smart_Pong_demo_Infineon_E8_Eval_Kit
 
+# Local workspace may include parallel app experiments; exclude them from
+# Smart Pong release builds unless explicitly integrated.
+CY_IGNORE += ./app/EdgeAI_Insulin_Pump_Infineon_E8_Eval_Kit
+
 # Add additional defines to the build process (without a leading -D).
 DEFINES+=CY_RETARGET_IO_CONVERT_LF_TO_CRLF _BAREMETAL=0
 # Set to 1 to run Smart Pong prep screen instead of LVGL music demo.

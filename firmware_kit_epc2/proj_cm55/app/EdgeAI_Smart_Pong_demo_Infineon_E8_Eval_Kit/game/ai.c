@@ -820,22 +820,22 @@ static uint32_t ai_update_div(const pong_game_t *g, bool use_npu)
         }
     }
 
-    /* NPU path: throttle updates to protect frame pacing, then adapt to observed latency. */
-    uint32_t div = 4u;
+    /* NPU path: keep refresh aggressive for gameplay quality, then adapt to observed latency. */
+    uint32_t div = 3u;
     switch (d)
     {
-        case 1: div = 9u; break;
-        case 2: div = 7u; break;
-        default: div = 5u; break;
+        case 1: div = 4u; break;
+        case 2: div = 3u; break;
+        default: div = 2u; break;
     }
 
     uint32_t avg_us = g ? g->npu.avg_infer_us : 0u;
-    if (avg_us > 14000u) div += 3u;
-    else if (avg_us > 9000u) div += 2u;
+    if (avg_us > 14000u) div += 2u;
+    else if (avg_us > 9000u) div += 1u;
     else if (avg_us > 5000u) div += 1u;
 
     if (div < 2u) div = 2u;
-    if (div > 14u) div = 14u;
+    if (div > 8u) div = 8u;
     return div;
 }
 
@@ -869,6 +869,10 @@ static float ai_noise(const pong_game_t *g, bool right_side)
         if (g->ai_learn_mode != kAiLearnModeBoth)
         {
             n *= 0.85f;
+        }
+        if (g->ai_enabled)
+        {
+            n *= 0.60f;
         }
     }
 
@@ -920,6 +924,29 @@ static float ai_lead_scale(const pong_game_t *g, bool right_side)
     return clampf(p->lead_scale, 0.70f, 2.00f);
 }
 
+static float ai_dynamic_lead_gain(const pong_game_t *g, bool side_edgeai, float t_hit, bool mixed_mode, float confidence)
+{
+    if (!g) return 1.0f;
+
+    float vx = g->ball.vx;
+    float vy = g->ball.vy;
+    float vz = g->ball.vz;
+    float vmag = sqrtf_approx((vx * vx) + (vy * vy) + (vz * vz));
+    float speed_w = clampf((vmag - 1.05f) * (1.0f / 1.45f), 0.0f, 1.0f);
+
+    float eta = clampf(t_hit, 0.0f, 0.90f);
+    float eta_w = clampf(1.0f - (eta * (1.0f / 0.90f)), 0.0f, 1.0f);
+
+    confidence = clampf(confidence, 0.0f, 1.0f);
+    float conf_w = 0.70f + (0.30f * confidence);
+    float gain = 1.0f + (0.30f * speed_w) + (0.34f * eta_w) + (0.36f * speed_w * eta_w * conf_w);
+
+    if (side_edgeai) gain += 0.10f;
+    if (mixed_mode) gain += 0.08f;
+
+    return clampf(gain, 1.0f, 1.95f);
+}
+
 static void ai_update_telemetry_window(pong_game_t *g)
 {
     if (!g) return;
@@ -949,6 +976,24 @@ static void ai_update_telemetry_window(pong_game_t *g)
     g->ai_telemetry_start_cycles = time_hal_cycles();
 }
 
+static bool ai_easy_ball_lock(const pong_game_t *g, const pong_paddle_t *p, bool right_side, float t_hit)
+{
+    if (!g || !p) return false;
+
+    float gap = 1.0f;
+    if (right_side)
+    {
+        gap = p->x_plane - (g->ball.x + g->ball.r);
+    }
+    else
+    {
+        gap = (g->ball.x - g->ball.r) - p->x_plane;
+    }
+
+    /* Tight interception window: favor pure intercept over style/lead. */
+    return (t_hit <= 0.32f) || (gap <= 0.16f);
+}
+
 static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_side)
 {
     if (!g || !p) return;
@@ -965,6 +1010,7 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
         float y_hit = 0.5f;
         float z_hit = 0.5f;
         float t_hit = 0.0f;
+        bool easy_lock = false;
         bool used_npu = false;
         float npu_confidence = 1.0f;
 
@@ -1049,28 +1095,60 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
                 }
             }
 
-            /* Learned anticipation: shift target along projected travel based on side profile. */
+            easy_lock = ai_easy_ball_lock(g, p, right_side, t_hit);
+            if (easy_lock)
             {
-                float lead = ai_lead_scale(g, right_side);
-                /* Give EdgeAI a little more anticipation at high ball speed. */
-                if (side_edgeai)
+                /* Close, simple returns should not lose to stylistic offsets. */
+                if (right_side)
                 {
-                    float vx = g->ball.vx;
-                    float vy = g->ball.vy;
-                    float vz = g->ball.vz;
-                    float vmag = sqrtf_approx((vx * vx) + (vy * vy) + (vz * vz));
-                    float hs = clampf((vmag - 1.10f) * (1.0f / 1.30f), 0.0f, 1.0f);
-                    float bonus = 0.10f + 0.12f * hs;
-                    if (g->ai_learn_mode != kAiLearnModeBoth) bonus += 0.05f;
-                    lead *= (1.0f + bonus * hs);
+                    ai_predict_right(g, dt, &y_hit, &z_hit, &t_hit);
                 }
-                float t_use = clampf(t_hit, 0.0f, 0.80f);
-                float k = (lead - 1.0f) * 0.45f;
-                y_hit += g->ball.vy * t_use * k;
-                z_hit += g->ball.vz * t_use * k;
+                else
+                {
+                    ai_predict_left(g, dt, &y_hit, &z_hit, &t_hit);
+                }
             }
 
-            if (side_edgeai)
+            /* Learned anticipation: shift target along projected travel based on side profile. */
+            if (!easy_lock)
+            {
+                float lead = ai_lead_scale(g, right_side);
+                float conf = used_npu ? npu_confidence : 0.85f;
+                lead *= ai_dynamic_lead_gain(g, side_edgeai, t_hit, g->ai_learn_mode != kAiLearnModeBoth, conf);
+
+                /* If AI side is trailing, commit more aggressively to recover rallies. */
+                if (side_edgeai)
+                {
+                    int32_t diff = right_side ? ((int32_t)g->score.left - (int32_t)g->score.right)
+                                              : ((int32_t)g->score.right - (int32_t)g->score.left);
+                    if (diff >= 2)
+                    {
+                        float catchup = clampf(((float)diff - 1.0f) * 0.12f, 0.0f, 0.35f);
+                        lead *= (1.0f + catchup);
+                    }
+                }
+                float t_use = clampf(t_hit, 0.0f, 0.80f);
+                float k = (lead - 1.0f) * 0.82f;
+                y_hit += g->ball.vy * t_use * k;
+                z_hit += g->ball.vz * t_use * k;
+
+                /* Add a small velocity-weighted bias so AI commits earlier in the current travel direction. */
+                {
+                    float vxy = absf(g->ball.vy);
+                    float vxz = absf(g->ball.vz);
+                    float vsum = vxy + vxz;
+                    if (vsum > 0.0001f)
+                    {
+                        float vx_w = clampf((absf(g->ball.vx) - 0.30f) * (1.0f / 1.60f), 0.0f, 1.0f);
+                        float eta_w = clampf(1.0f - (t_use * (1.0f / 0.80f)), 0.0f, 1.0f);
+                        float dir_gain = 0.050f + (0.060f * vx_w * eta_w);
+                        y_hit += signf_nonzero(g->ball.vy) * dir_gain * (vxy / vsum);
+                        z_hit += signf_nonzero(g->ball.vz) * dir_gain * (vxz / vsum);
+                    }
+                }
+            }
+
+            if (side_edgeai && !easy_lock)
             {
                 ai_learn_profile_t *lp = ai_profile_side(g, right_side);
                 if (lp)
@@ -1083,6 +1161,11 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
 
             /* Add small noise to avoid perfect play. */
             float noise = ai_noise(g, right_side);
+            if (easy_lock) noise *= 0.20f;
+            if (side_edgeai && g->ai_enabled && ball_toward)
+            {
+                noise *= 0.55f;
+            }
             y_hit += rand_f(g, -noise, noise);
             z_hit += rand_f(g, -noise, noise);
         }
@@ -1101,6 +1184,20 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
     float prev_z = p->z;
 
     float max_speed = ai_max_speed(g, right_side);
+    if (ball_toward)
+    {
+        float chase_w = clampf((absf(g->ball.vx) - 0.40f) * (1.0f / 1.50f), 0.0f, 1.0f);
+        max_speed *= (1.0f + (0.30f * chase_w));
+        if (side_edgeai && g->ai_enabled)
+        {
+            max_speed *= 1.15f;
+        }
+
+        if (ai_easy_ball_lock(g, p, right_side, 0.25f))
+        {
+            max_speed *= 1.35f;
+        }
+    }
     float max_step = max_speed * dt;
 
     float dy = p->target_y - p->y;

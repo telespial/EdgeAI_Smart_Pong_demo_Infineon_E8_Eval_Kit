@@ -193,6 +193,8 @@ Persistence behavior:
 - Settings row for volume: `VOL DN  xxx  UP`
 - Volume default on boot: `60`
 - CapSense volume path implemented in input HAL (I2C status frame + GPIO fallback)
+- Competitive AI tuning: higher lead/chase behavior with reduced EdgeAI noise
+- Easy-ball lock: close-range returns force analytic intercept (reduced style/noise misses)
 
 ## Build and Flash (Infineon E8 / ModusToolbox)
 

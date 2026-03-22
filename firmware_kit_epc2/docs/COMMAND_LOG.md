@@ -33,3 +33,8 @@
 8. Verified build success on 4.3 profile and verified fail-fast behavior for non-4.3 profile.
 9. Reflashed 4.3 profile and confirmed OpenOCD write/verify success with `Boot Status : CYBOOT_SUCCESS`.
 10. Synced docs for 4.3-only EPC2 release baseline and restore workflow.
+11. Tuned Smart Pong AI lead behavior for stronger anticipation, directional commitment, and higher chase speed.
+12. Added competitive AI updates: faster NPU refresh cadence, lower EdgeAI noise, and catch-up boost when trailing.
+13. Added easy-ball lock behavior to force close-range analytic intercept and reduce simple misses.
+14. Added `CY_IGNORE` exclusion for `proj_cm55/app/EdgeAI_Insulin_Pump_Infineon_E8_Eval_Kit` so Pong builds remain stable while parallel insulin work exists in workspace.
+15. Rebuilt and reflashed tuned Pong variants multiple times; final write/verify passed on B0 EPC2 hardware (`PSE846GPS2DBZC4A`).

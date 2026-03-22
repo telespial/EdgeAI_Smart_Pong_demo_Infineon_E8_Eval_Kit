@@ -17,6 +17,8 @@ Known-good checkpoints for fast recovery when development changes break boot, di
   - `EDGEAI_FIXED_FPS=180`
   - max ball speed cap: `+50%` over prior baseline.
   - audio event tones and win tune enabled.
+  - competitive AI retune active (stronger lead/chase + reduced EdgeAI noise).
+  - easy-ball lock active for close-range analytic intercept.
   - volume UI row enabled (`VOL DN  xxx  UP`), default `VOL=60`.
 
 ## Restore Procedure
