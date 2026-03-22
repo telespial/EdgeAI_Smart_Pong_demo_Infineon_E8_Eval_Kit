@@ -1,6 +1,6 @@
 # EdgeAI Smart Pong - Infineon PSOC Edge E8 Evaluation Kit
 
-![Infineon_Smart_Pong](https://github.com/user-attachments/assets/a8e60640-265d-4e88-af26-dcac4f52fad6)
+![Infineon_Smart_Pong_sm](https://github.com/user-attachments/assets/1a125dba-c417-4fc1-b21e-d31a3be01c6d)
 
 ## Real World AI Learning Demonstration
 
