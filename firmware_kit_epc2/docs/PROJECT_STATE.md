@@ -58,6 +58,15 @@ PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 13. Created timestamped restore artifacts for Golden/Failsafe release capture:
     - `../failsafe/e8_smart_pong_20260324_081904_fairness_retune_app_combined.hex`
     - `../failsafe/e8_smart_pong_20260324_081904_fairness_retune_proj_cm55.elf`
+14. Enlarged top HUD side-role labels (`HUMAN`, `ALGO`, `EdgeAI`) by increasing role text scale in `game/render.c`.
+15. Rebuilt after side-role label size update:
+    - `make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8` ✅
+16. Flashed after side-role label size update:
+    - `make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP` ✅
+    - Verified write+readback on `PSE846GPS2DBZC4A`.
+17. Promoted top role-label update build as latest Golden/Failsafe restore snapshot:
+    - `../failsafe/e8_smart_pong_20260324_095648_top_role_labels_app_combined.hex`
+    - `../failsafe/e8_smart_pong_20260324_095648_top_role_labels_proj_cm55.elf`
 
 ## Next Milestones
 1. Complete end-to-end validation for CS81/CS82 touch path with bridge firmware state.

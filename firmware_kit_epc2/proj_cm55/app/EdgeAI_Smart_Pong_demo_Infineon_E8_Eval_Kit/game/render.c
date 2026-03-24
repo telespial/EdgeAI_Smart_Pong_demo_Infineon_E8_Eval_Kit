@@ -661,7 +661,7 @@ static void render_side_role_text(uint16_t *dst, uint32_t w, uint32_t h, int32_t
     const char *txt = "HUMAN";
     uint16_t c_role = sw_pack_rgb565_u8(255, 198, 90);
     const uint16_t c_shadow = sw_pack_rgb565_u8(10, 10, 12);
-    const int32_t scale = 2;
+    const int32_t scale = 3;
 
     if (role == kSideRoleAlgo)
     {

@@ -28,8 +28,8 @@ Known-good checkpoints for fast recovery when development changes break boot, di
 - Flash:
   - `make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP`
 - Artifacts:
-  - `../failsafe/e8_smart_pong_20260324_081904_fairness_retune_app_combined.hex`
-  - `../failsafe/e8_smart_pong_20260324_081904_fairness_retune_proj_cm55.elf`
+  - `../failsafe/e8_smart_pong_20260324_095648_top_role_labels_app_combined.hex`
+  - `../failsafe/e8_smart_pong_20260324_095648_top_role_labels_proj_cm55.elf`
 
 ## Restore Procedure
 1. Fetch tags:

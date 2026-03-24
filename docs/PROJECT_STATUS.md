@@ -52,6 +52,7 @@
 - Build: `make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8` ✅
 - Flash: `make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP` ✅
 - Detected board during flash: `PSE846GPS2DBZC4A` (Rev `B0`)
+- UI update: enlarged top HUD role labels (`HUMAN` / `ALGO` / `EdgeAI`) and reflashed.
 
 ## Restore Policy
 
@@ -59,5 +60,5 @@ Use tagged restore points:
 - `golden-e8-smart-pong`
 - `failsafe-e8-smart-pong`
 - Restore artifacts:
-  - `failsafe/e8_smart_pong_20260324_081904_fairness_retune_app_combined.hex`
-  - `failsafe/e8_smart_pong_20260324_081904_fairness_retune_proj_cm55.elf`
+  - `failsafe/e8_smart_pong_20260324_095648_top_role_labels_app_combined.hex`
+  - `failsafe/e8_smart_pong_20260324_095648_top_role_labels_proj_cm55.elf`

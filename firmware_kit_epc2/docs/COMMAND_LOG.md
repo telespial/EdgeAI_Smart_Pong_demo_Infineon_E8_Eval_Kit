@@ -48,3 +48,11 @@
 2026-03-24T08:19:04-07:00 | create golden/failsafe restore artifacts | copied app_combined.hex and proj_cm55.elf to ../failsafe/ timestamped fairness_retune artifacts
 2026-03-24T08:20:02-07:00 | sync docs for fairness release | updated README + root docs + firmware docs with 2026-03-24 build/flash and restore artifacts
 2026-03-24T08:21:19-07:00 | prepare golden/failsafe release commit | stage ai fairness changes, docs sync, and timestamped failsafe artifacts
+2026-03-24T09:53:45-07:00 | inspect role label scale settings | rg/nl render.c for HUMAN/ALGO/EdgeAI draw path
+2026-03-24T09:54:12-07:00 | enlarge top role labels | render.c role text scale increased for HUMAN/ALGO/EdgeAI
+2026-03-24T09:54:12-07:00 | build after role label size change | make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8
+2026-03-24T09:54:36-07:00 | update project state for role label resize | PROJECT_STATE.md updated with HUMAN/ALGO/EdgeAI top-label enlargement + build PASS
+2026-03-24T09:55:02-07:00 | flash after top role-label resize | make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP
+2026-03-24T09:55:30-07:00 | update project state after role-label flash | PROJECT_STATE.md updated with flash PASS for HUMAN/ALGO/EdgeAI label enlargement
+2026-03-24T09:56:48-07:00 | create restore artifacts for top role-label update | copied app_combined.hex and proj_cm55.elf to ../failsafe/ timestamped top_role_labels artifacts
+2026-03-24T09:57:31-07:00 | sync docs for top role-label restore release | updated root+firmware status/restore docs and promoted new 20260324_095648 artifacts

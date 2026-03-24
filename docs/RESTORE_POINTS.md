@@ -25,8 +25,8 @@ Most recent verification:
 - Device: `PSE846GPS2DBZC4A` (Rev `B0`)
 - Program artifact: `firmware_kit_epc2/build/app_combined.hex`
 - Restore artifacts:
-  - `failsafe/e8_smart_pong_20260324_081904_fairness_retune_app_combined.hex`
-  - `failsafe/e8_smart_pong_20260324_081904_fairness_retune_proj_cm55.elf`
+  - `failsafe/e8_smart_pong_20260324_095648_top_role_labels_app_combined.hex`
+  - `failsafe/e8_smart_pong_20260324_095648_top_role_labels_proj_cm55.elf`
 
 ## Restore to Golden/Failsafe
 

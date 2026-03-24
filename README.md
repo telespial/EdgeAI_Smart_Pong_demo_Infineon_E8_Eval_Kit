@@ -216,6 +216,7 @@ Latest verified flash checkpoint:
 - Date: `2026-03-24`
 - Board: `PSE846GPS2DBZC4A` (EPC2, Rev `B0`)
 - Runtime mode target: `APP_INSULIN_PUMP_MODE=0`, `APP_SMART_PONG_MODE=1` (Smart Pong boot path)
+- UI: top HUD role labels (`HUMAN` / `ALGO` / `EdgeAI`) enlarged for readability.
 
 Optional helper scripts:
 
