@@ -37,17 +37,27 @@
 - P0 vertical nudge:
   - `g->ball.vy -= ay * k * dt`
 
-## AI Balance Status (2026-03-22)
+## AI Balance Status (2026-03-24)
 
 - Mixed-mode EdgeAI strength reduced to avoid 99% win behavior.
 - Key balancing changes:
-  - Lower lead/chase aggressiveness
-  - Lower NPU blend weight in mixed mode
-  - Higher mixed-mode noise / reduced precision boosts
+  - Lower fixed EdgeAI lead bonus in mixed mode
+  - Lower fixed trailing catch-up amplification
+  - Lower fixed mixed-mode noise-reduction advantage
+  - Preserve adaptive learning gains so EdgeAI still improves from play outcomes
   - Score-lead anti-runaway handicap retained
+
+## Verification (2026-03-24)
+
+- Build: `make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8` ✅
+- Flash: `make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP` ✅
+- Detected board during flash: `PSE846GPS2DBZC4A` (Rev `B0`)
 
 ## Restore Policy
 
 Use tagged restore points:
 - `golden-e8-smart-pong`
 - `failsafe-e8-smart-pong`
+- Restore artifacts:
+  - `failsafe/e8_smart_pong_20260324_081904_fairness_retune_app_combined.hex`
+  - `failsafe/e8_smart_pong_20260324_081904_fairness_retune_proj_cm55.elf`

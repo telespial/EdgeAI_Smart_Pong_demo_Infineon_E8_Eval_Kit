@@ -38,3 +38,13 @@
 13. Added easy-ball lock behavior to force close-range analytic intercept and reduce simple misses.
 14. Added `CY_IGNORE` exclusion for `proj_cm55/app/EdgeAI_Insulin_Pump_Infineon_E8_Eval_Kit` so Pong builds remain stable while parallel insulin work exists in workspace.
 15. Rebuilt and reflashed tuned Pong variants multiple times; final write/verify passed on B0 EPC2 hardware (`PSE846GPS2DBZC4A`).
+2026-03-24T07:43:32-07:00 | fairness retune in ai.c | reduced fixed EdgeAI mixed-mode pre-bias multipliers; kept adaptive learning
+2026-03-24T07:43:32-07:00 | build verify fairness retune | make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8
+2026-03-24T07:43:48-07:00 | update project state after fairness retune | docs/PROJECT_STATE.md updated; build blocked by missing CY_TOOLS_PATHS in shell
+2026-03-24T08:01:33-07:00 | set toolchain env for E8 build/flash | export CY_TOOLS_PATHS/CY_COMPILER_GCC_ARM_DIR/CY_TOOL_edgeprotecttools_EXE_ABS
+2026-03-24T08:01:33-07:00 | build smart pong firmware | make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8
+2026-03-24T08:01:54-07:00 | flash smart pong firmware | make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP
+2026-03-24T08:02:26-07:00 | update project state after build+flash | PROJECT_STATE.md marked fairness retune as build/flash verified on PSE846GPS2DBZC4A
+2026-03-24T08:19:04-07:00 | create golden/failsafe restore artifacts | copied app_combined.hex and proj_cm55.elf to ../failsafe/ timestamped fairness_retune artifacts
+2026-03-24T08:20:02-07:00 | sync docs for fairness release | updated README + root docs + firmware docs with 2026-03-24 build/flash and restore artifacts
+2026-03-24T08:21:19-07:00 | prepare golden/failsafe release commit | stage ai fairness changes, docs sync, and timestamped failsafe artifacts

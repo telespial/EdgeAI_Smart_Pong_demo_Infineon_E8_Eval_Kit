@@ -17,9 +17,19 @@ Known-good checkpoints for fast recovery when development changes break boot, di
   - `EDGEAI_FIXED_FPS=180`
   - max ball speed cap: `+50%` over prior baseline.
   - audio event tones and win tune enabled.
-  - competitive AI retune active (stronger lead/chase + reduced EdgeAI noise).
+  - fairness retune active: reduced fixed EdgeAI mixed-mode pre-bias, adaptive learning retained.
   - easy-ball lock active for close-range analytic intercept.
   - volume UI row enabled (`VOL DN  xxx  UP`), default `VOL=60`.
+
+## Latest Verified Restore Artifact (2026-03-24)
+- Board: `PSE846GPS2DBZC4A` (Rev `B0`)
+- Build:
+  - `make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8`
+- Flash:
+  - `make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP`
+- Artifacts:
+  - `../failsafe/e8_smart_pong_20260324_081904_fairness_retune_app_combined.hex`
+  - `../failsafe/e8_smart_pong_20260324_081904_fairness_retune_proj_cm55.elf`
 
 ## Restore Procedure
 1. Fetch tags:

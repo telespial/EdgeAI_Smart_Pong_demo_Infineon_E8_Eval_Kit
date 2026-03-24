@@ -868,11 +868,13 @@ static float ai_noise(const pong_game_t *g, bool right_side)
         }
         if (g->ai_learn_mode != kAiLearnModeBoth)
         {
-            n *= 0.95f;
+            /* Mixed mode: keep a slight EdgeAI assist without overwhelming ALGO baseline. */
+            n *= 0.98f;
         }
         if (g->ai_enabled)
         {
-            n *= 0.92f;
+            /* NPU path should help, but stay closer to neutral for fair side-by-side comparison. */
+            n *= 0.97f;
         }
     }
 
@@ -941,7 +943,8 @@ static float ai_dynamic_lead_gain(const pong_game_t *g, bool side_edgeai, float 
     float conf_w = 0.70f + (0.30f * confidence);
     float gain = 1.0f + (0.22f * speed_w) + (0.24f * eta_w) + (0.22f * speed_w * eta_w * conf_w);
 
-    if (side_edgeai) gain += 0.03f;
+    /* Keep a small EdgeAI anticipation edge, reduced for fair mixed-mode comparison. */
+    if (side_edgeai) gain += 0.01f;
     if (mixed_mode) gain += 0.00f;
 
     return clampf(gain, 1.0f, 1.65f);
@@ -1123,7 +1126,7 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
                                               : ((int32_t)g->score.right - (int32_t)g->score.left);
                     if (diff >= 3)
                     {
-                        float catchup = clampf(((float)diff - 1.0f) * 0.12f, 0.0f, 0.35f);
+                        float catchup = clampf(((float)diff - 1.0f) * 0.06f, 0.0f, 0.18f);
                         lead *= (1.0f + catchup);
                     }
                 }
@@ -1164,7 +1167,7 @@ static void ai_step_one(pong_game_t *g, float dt, pong_paddle_t *p, bool right_s
             if (easy_lock) noise *= 0.60f;
             if (side_edgeai && g->ai_enabled && ball_toward)
             {
-                noise *= 0.90f;
+                noise *= 0.95f;
             }
 
             /* In mixed AI/ALGO modes, if EdgeAI is comfortably ahead, add slight

@@ -14,16 +14,19 @@ Current baseline includes:
 - Two-line `SMART` / `PONG` startup title
 - `EDGEAI_FIXED_FPS=180`
 - Higher gameplay pace with max ball speed cap tuned to `+50%` over prior baseline
-- Mixed-mode AI balancing update (reduced EdgeAI dominance, improved ALGO scoring opportunity)
+- Mixed-mode AI balancing update (reduced fixed EdgeAI pre-bias while preserving adaptive learning)
 - Win counter integrity fix:
   - Bottom `WINS` totals update only on true match completion
   - Non-match `game_reset()` paths no longer inflate wins
 - Verified build/program on `KIT_PSE84_EVAL_EPC2` with `CONFIG_DISPLAY=W4P3INCH_DISP`
 
 Most recent verification:
-- Date: `2026-03-22`
+- Date: `2026-03-24`
 - Device: `PSE846GPS2DBZC4A` (Rev `B0`)
 - Program artifact: `firmware_kit_epc2/build/app_combined.hex`
+- Restore artifacts:
+  - `failsafe/e8_smart_pong_20260324_081904_fairness_retune_app_combined.hex`
+  - `failsafe/e8_smart_pong_20260324_081904_fairness_retune_proj_cm55.elf`
 
 ## Restore to Golden/Failsafe
 

@@ -4,7 +4,7 @@
 PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 
 ## Date
-2026-03-22
+2026-03-24
 
 ## Working Hardware
 - Kit: `KIT_PSE84_EVAL_EPC2`
@@ -44,6 +44,20 @@ PSOC Edge E84 Eval (EPC2), LVGL graphics base for Smart Pong port.
 8. Added multiple AI lead/chase tuning passes with hardware validation flashes.
 9. Added easy-ball lock logic to cut close-range misses.
 10. Excluded parallel insulin app folder from CM55 build via `CY_IGNORE` in `proj_cm55/Makefile`.
+11. Fairness retune in `game/ai.c` to reduce fixed mixed-mode EdgeAI pre-bias while preserving adaptive learning improvements:
+    - Reduced fixed EdgeAI lead bonus.
+    - Reduced fixed trailing catch-up amplification.
+    - Reduced fixed mixed-mode noise-reduction boosts.
+12. Build and flash re-run after fairness retune with full toolchain environment configured:
+    - `make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8` ✅
+    - `make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP` ✅
+    - Hardware/programming confirmation:
+      - Device: `PSE846GPS2DBZC4A` (Rev `B0`)
+      - Programmed: `app_combined.hex`
+      - Flash write/verify completed successfully.
+13. Created timestamped restore artifacts for Golden/Failsafe release capture:
+    - `../failsafe/e8_smart_pong_20260324_081904_fairness_retune_app_combined.hex`
+    - `../failsafe/e8_smart_pong_20260324_081904_fairness_retune_proj_cm55.elf`
 
 ## Next Milestones
 1. Complete end-to-end validation for CS81/CS82 touch path with bridge firmware state.
