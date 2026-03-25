@@ -56,3 +56,11 @@
 2026-03-24T09:55:30-07:00 | update project state after role-label flash | PROJECT_STATE.md updated with flash PASS for HUMAN/ALGO/EdgeAI label enlargement
 2026-03-24T09:56:48-07:00 | create restore artifacts for top role-label update | copied app_combined.hex and proj_cm55.elf to ../failsafe/ timestamped top_role_labels artifacts
 2026-03-24T09:57:31-07:00 | sync docs for top role-label restore release | updated root+firmware status/restore docs and promoted new 20260324_095648 artifacts
+
+## 2026-03-25
+1. Removed cross-project leftovers (`app/EdgeAI_Insulin_Pump_Infineon_E8_Eval_Kit/`, `mtb_shared/capsense/`) from Smart Pong repo.
+2. Decoupled Smart Pong from insulin compile path in `proj_cm55/Makefile` and `proj_cm55/main.c`.
+3. Verified Smart Pong build + flash:
+   - `make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8`
+   - `make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP`
+4. Updated restore/status docs for dated golden restore tag.

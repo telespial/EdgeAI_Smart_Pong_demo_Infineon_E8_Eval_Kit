@@ -64,7 +64,6 @@
 #include "demos/lv_demos.h"
 #include "display_i2c_config.h"
 #include "app/EdgeAI_Smart_Pong_demo_Infineon_E8_Eval_Kit/smart_pong_app.h"
-#include "app/EdgeAI_Insulin_Pump_Infineon_E8_Eval_Kit/edgeai_insulin_pump_app.h"
 
 /*******************************************************************************
 * Macros
@@ -111,9 +110,6 @@
 #define APP_SMART_PONG_MODE                 (0U)
 #endif
 
-#ifndef APP_INSULIN_PUMP_MODE
-#define APP_INSULIN_PUMP_MODE               (0U)
-#endif
 
 
 /*******************************************************************************
@@ -625,11 +621,7 @@ static void cm55_gfx_task(void *arg)
             lv_init();
             lv_port_disp_init();
             lv_port_indev_init();
-
-            #if (APP_INSULIN_PUMP_MODE == 1U)
-            /* Insulin Pump application entry point */
-            edgeai_insulin_pump_app_start();
-            #elif (APP_SMART_PONG_MODE == 1U)
+            #if (APP_SMART_PONG_MODE == 1U)
             /* Smart Pong application staging entry point */
             smart_pong_app_start();
             #else
