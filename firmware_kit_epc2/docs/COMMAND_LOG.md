@@ -64,3 +64,5 @@
    - `make build TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP -j8`
    - `make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP`
 4. Updated restore/status docs for dated golden restore tag.
+2026-03-25T10:05:00-07:00 | restore baseline verification in clean temp clone | cloned repo in isolated temp path, ran make getlibs/build/program, OpenOCD write+verify PASS on PSE846GPS2DBZC4A
+2026-03-25T10:07:00-07:00 | docs + restore tags sync | updated restore/status/runbook docs for self-contained build path and golden/failsafe tag workflow

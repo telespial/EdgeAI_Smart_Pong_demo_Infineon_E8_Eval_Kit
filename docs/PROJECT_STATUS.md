@@ -20,3 +20,7 @@
 - Flash: `make program TOOLCHAIN=GCC_ARM CONFIG_DISPLAY=W4P3INCH_DISP` ✅
 - Detected board: `PSE846GPS2DBZC4A` (Rev `B0`)
 - Program artifact: `firmware_kit_epc2/build/app_combined.hex`
+
+## Restore tags
+- Golden: `golden-e8-smart-pong`, `golden-e8-smart-pong-20260325`
+- Failsafe: `failsafe-e8-smart-pong`, `failsafe-e8-smart-pong-20260325`
